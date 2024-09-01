@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from .models import Photo
+from .models import Photo, PhotoTag
 
 
 class PhotoForm(forms.ModelForm):
@@ -23,9 +23,16 @@ class PhotoForm(forms.ModelForm):
         return instance
 
 
+@admin.register(PhotoTag)
+class PhotoTagAdmin(admin.ModelAdmin):
+    list_display = ('tag_name',)
+    search_fields = ('tag_name',)
+
+
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
     form = PhotoForm
     readonly_fields = ('camera_model', 'lens_model', 'focal_length', 'iso', 'aperture', 'exposure_time')
+    filter_horizontal = ('tags',)
 
 

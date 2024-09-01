@@ -7,6 +7,13 @@ from PIL.ExifTags import TAGS
 from utils import resize_image
 
 
+class PhotoTag(models.Model):
+    tag_name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.tag_name
+
+
 class Photo(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -21,6 +28,7 @@ class Photo(models.Model):
     original_image = models.ImageField(upload_to="photo_gallery/%Y/%m/%d")
     resized_image = models.ImageField(upload_to="photo_gallery/%Y/%m/%d", editable=False)
     thumbnail_image = models.ImageField(upload_to="photo_gallery/%Y/%m/%d", editable=False)
+    tags = models.ManyToManyField(PhotoTag, related_name='photos', blank=True)
 
     def save(self, *args, **kwargs):
         if self.original_image:
