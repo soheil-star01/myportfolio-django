@@ -13,7 +13,8 @@ def photo_gallery_index(request):
 def photo_gallery_filter_by_tags(request, tag_pk):
 
     photos = Photo.objects.filter(tags__pk=tag_pk)
-    context = {'photos': photos}
+    tag_name = PhotoTag.objects.get(pk=tag_pk).tag_name
+    context = {'photos': photos, 'tag_name': tag_name}
 
     return render(request, 'photo_gallery/index.html', context)
 
@@ -22,8 +23,7 @@ def photo_gallery_detail(request, pk):
 
     photo = Photo.objects.get(pk=pk)
     tags = photo.tags.all()
-    tags = [tag.tag_name for tag in tags]
-    context = {'photo': photo, 'tags': ', '.join(tags)}
+    context = {'photo': photo, 'tags': tags}
 
     return render(request, 'photo_gallery/detail.html', context)
 

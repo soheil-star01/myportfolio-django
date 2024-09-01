@@ -7,7 +7,7 @@
 {% block page_content %}
     <img src="{{ photo.resized_image.url }}">
     <small>{{ photo.datetime_posted.date }}</small>
-    <small>Tags: {{ tags }}</small>
+    <small>Tags: {% for tag in tags %} <a href="{% url 'photo_gallery_filter_by_tags' tag.pk %}">{{ tag.tag_name }} </a> , {% endfor %}</small>
     <p>{{ photo.description | linebreaks }}</p>
     <p>Camera: {{ photo.camera_model }}</p>
     <p>Lens: {{ photo.lens_model }}</p>
