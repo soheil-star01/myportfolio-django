@@ -31,7 +31,7 @@
         {% for photo in photos %}
             <div class="photo-item">
                 <a href="{% url 'photo_gallery_detail' photo.pk %}">
-                    <img src="{{ photo.thumbnail_image.url }}">
+                    <img src={{ photo.thumbnail_image.url }}>
                 </a>
             </div>
         {% endfor %}

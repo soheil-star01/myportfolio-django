@@ -25,21 +25,20 @@ class Photo(models.Model):
     iso = models.IntegerField(default=200)
     aperture = models.FloatField()
     exposure_time = models.FloatField()
-    original_image = models.ImageField(upload_to="photo_gallery/%Y/%m/%d")
-    resized_image = models.ImageField(upload_to="photo_gallery/%Y/%m/%d", editable=False)
-    thumbnail_image = models.ImageField(upload_to="photo_gallery/%Y/%m/%d", editable=False)
+    original_image = models.ImageField(upload_to="media/photo_gallery/%Y/%m/%d")
+    resized_image = models.ImageField(upload_to="media/photo_gallery/%Y/%m/%d", editable=False)
+    thumbnail_image = models.ImageField(upload_to="media/photo_gallery/%Y/%m/%d", editable=False)
     tags = models.ManyToManyField(PhotoTag, related_name='photos', blank=True)
 
     def save(self, *args, **kwargs):
         if self.original_image:
             img = Image.open(self.original_image)
-            file_name = os.path.basename(self.original_image.name)
             exif_data = img._getexif()
             self.thumbnail_image = resize_image(
-                img, f'tmb_{file_name}', max_width=100, max_height=100
+                img, f'tmb_{self.original_image.name}', max_width=100, max_height=100
             )
             self.resized_image = resize_image(
-                img, f'std_{file_name}', max_height=500, max_width=500
+                img, f'std_{self.original_image.name}', max_height=500, max_width=500
             )
 
             if exif_data:

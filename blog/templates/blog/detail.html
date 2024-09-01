@@ -5,7 +5,7 @@
 {% endblock page_title %}
 
 {% block page_content %}
-    <img src="{{ post.resized_image.url }}">
+    <img src={{ post.resized_image.url }}>
     <small>{{ post.created_on.date }}</small>
     <p>{{ post.content | linebreaks }}</p>
 {% endblock page_content %}

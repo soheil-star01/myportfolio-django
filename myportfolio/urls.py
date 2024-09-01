@@ -21,12 +21,12 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('blog.urls')),
+    path('blog/', include('blog.urls')),
     path('photo_gallery/', include('photo_gallery.urls')),
     path('', include('my_app.urls')),
 ]
 
 # Serve blog images from /blog/ URL path
 if settings.DEBUG:
-    urlpatterns += static('/blog/', document_root=settings.MEDIA_ROOT + '/blog/')
-    urlpatterns += static('/photo_gallery/', document_root=settings.MEDIA_ROOT + '/photo_gallery/')
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # urlpatterns += static('/photo_gallery/', document_root=settings.MEDIA_ROOT + '/photo_gallery/')

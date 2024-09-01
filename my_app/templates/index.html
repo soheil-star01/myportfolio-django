@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block about_me %}
+    <p>Greeting!</p>
+    <p>My name is Soheil (name of a star. read more in <a href="https://en.wikipedia.org/wiki/Lambda_Velorum">Wiki!</a>)
+        but I mostly go with Sam. I have around one/two years of experience in field of Data Science. And around 5 years
+        of experience in Python programming and Backend programming. (more about me and my stacks here!)
+    </p>
+    <p>
+    I do photography (mostly landscape) in my free time. feel free to check out my latest photos in the Photo Gallery.
+    </p>
+    <p>Website powered by Django!</p>
+{% endblock about_me %}
+{#{% block page_title %}#}
+{#    <h2>Blog Posts</h2>#}
+{#{% endblock page_title %}#}
+
+{% block page_content %}
+
+    <h2>Latest blog post</h2>
+    <img src={{ last_blog_post.thumbnail_image }}>
+    <h3><a href="{% url 'blog_detail' last_blog_post.pk %}">{{ last_blog_post.title }}</a></h3>
+    <small>{{ last_blog_post.date_posted }}</small>
+    <p>{{ last_blog_post.summarized_content | slice:":400" }}...</p>
+
+    <h2>Latest photo</h2>
+    <a href="{% url 'photo_gallery_detail' last_photo_gallery.pk %}">
+        <img src="{{ last_photo_gallery.thumbnail_image.url }}">
+    </a>
+{% endblock page_content %}

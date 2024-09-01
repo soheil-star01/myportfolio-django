@@ -9,9 +9,9 @@ class BlogPost(models.Model):
     author = models.CharField(max_length=200)
     date_posted = models.DateTimeField("date published")
     summarized_content = models.TextField()
-    original_image = models.ImageField(upload_to="blog/%Y/%m/%d")
-    resized_image = models.ImageField(upload_to="blog/%Y/%m/%d", editable=False)
-    thumbnail_image = models.ImageField(upload_to="blog/%Y/%m/%d", editable=False)
+    original_image = models.ImageField(upload_to="media/blog/%Y/%m/%d")
+    resized_image = models.ImageField(upload_to="media/blog/%Y/%m/%d", editable=False)
+    thumbnail_image = models.ImageField(upload_to="media/blog/%Y/%m/%d", editable=False)
 
     def save(self, *args, **kwargs):
         img = Image.open(self.original_image)
