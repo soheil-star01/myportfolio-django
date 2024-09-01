@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    <h2>Photo Gallery</h2>
+{% endblock page_title %}
+
+{% block page_content %}
+<style>
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .photo-item {
+        width: 100%;
+    }
+
+    .photo-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+</style>
+
+{% block photos %}
+<div class="photo-grid">
+    {% for photo in photos %}
+        <div class="photo-item">
+            <a href="{% url 'photo_gallery_detail' photo.pk %}">
+                <img src="{{ photo.thumbnail_image.url }}">
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock photos %}
+{% endblock page_content %}

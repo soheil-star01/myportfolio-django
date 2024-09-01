@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    <h2>{{ photo.title }}</h2>
+{% endblock page_title %}
+
+{% block page_content %}
+    <img src="{{ photo.resized_image.url }}">
+    <small>{{ photo.datetime_posted.date }}</small>
+    <p>{{ photo.description | linebreaks }}</p>
+    <p>Camera: {{ photo.camera_model }}</p>
+    <p>Lens: {{ photo.lens_model }}</p>
+    <p>Focal length: {{ photo.focal_length }}</p>
+    <p>Iso: {{ photo.iso }}</p>
+    <p>F/{{ photo.aperture }}</p>
+    <p>Exposure time: {{ photo.exposure_time }}</p>
+
+{% endblock page_content %}
