@@ -7,5 +7,5 @@ admin.site.register(PostCategory)
 
 @admin.register(BlogPost)
 class PhotoTagAdmin(admin.ModelAdmin):
-    list_display = ('category',)
-    search_fields = ('category__category',)
+    list_display = ('title', 'category', 'date_posted')
+    # search_fields = ('category__category',)

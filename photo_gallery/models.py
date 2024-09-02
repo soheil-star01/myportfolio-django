@@ -30,15 +30,18 @@ class Photo(models.Model):
     thumbnail_image = models.ImageField(upload_to="media/photo_gallery/%Y/%m/%d", editable=False)
     tags = models.ManyToManyField(PhotoTag, related_name='photos', blank=True)
 
+    def __str__(self):
+        return self.title
+
     def save(self, *args, **kwargs):
         if self.original_image:
             img = Image.open(self.original_image)
             exif_data = img._getexif()
             self.thumbnail_image = resize_image(
-                img, f'tmb_{self.original_image.name}', max_width=100, max_height=100
+                img, f'tmb_{self.original_image.name}', max_width=300, max_height=300
             )
             self.resized_image = resize_image(
-                img, f'std_{self.original_image.name}', max_height=500, max_width=500
+                img, f'std_{self.original_image.name}', max_height=700, max_width=700
             )
 
             if exif_data:
