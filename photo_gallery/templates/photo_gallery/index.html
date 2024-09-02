@@ -27,14 +27,14 @@
         <p>Filtered by tag: {{ tag_name }}</p>
     {% endif %}
     {% block photos %}
-    <div class="photo-grid">
-        {% for photo in photos %}
-            <div class="photo-item">
-                <a href="{% url 'photo_gallery_detail' photo.pk %}">
-                    <img src={{ photo.thumbnail_image.url }}>
-                </a>
-            </div>
-        {% endfor %}
-    </div>
+        <div class="photo-grid">
+            {% for photo in photos %}
+                <div class="photo-item">
+                    <a href="{% url 'photo_gallery_detail' photo.pk %}">
+                        <img src={{ photo.thumbnail_image.url }}>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
     {% endblock photos %}
 {% endblock page_content %}

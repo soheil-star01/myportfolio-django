@@ -3,6 +3,13 @@ from django.db import models
 from utils import resize_image
 
 
+class PostCategory(models.Model):
+    category = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return self.category
+
+
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
@@ -12,6 +19,7 @@ class BlogPost(models.Model):
     original_image = models.ImageField(upload_to="media/blog/%Y/%m/%d")
     resized_image = models.ImageField(upload_to="media/blog/%Y/%m/%d", editable=False)
     thumbnail_image = models.ImageField(upload_to="media/blog/%Y/%m/%d", editable=False)
+    category = models.ForeignKey(PostCategory, on_delete=models.CASCADE, null=True)
 
     def save(self, *args, **kwargs):
         img = Image.open(self.original_image)
