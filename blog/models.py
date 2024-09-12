@@ -1,6 +1,7 @@
 from PIL import Image
 from django.db import models
 from utils import resize_image
+from ckeditor.fields import RichTextField
 
 
 class PostCategory(models.Model):
@@ -12,7 +13,7 @@ class PostCategory(models.Model):
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
-    content = models.TextField()
+    content = RichTextField(null=True)
     author = models.CharField(max_length=200)
     date_posted = models.DateTimeField("date published")
     summarized_content = models.TextField()

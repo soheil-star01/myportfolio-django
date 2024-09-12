@@ -1,18 +1,15 @@
 {% extends "base.html" %}
 {% block about_me %}
-    <p>Greeting!</p>
-    <p>My name is Soheil (name of a star. read more in <a href="https://en.wikipedia.org/wiki/Lambda_Velorum">Wiki!</a>)
-        but I mostly go with Sam. I have around one/two years of experience in field of Data Science. And around 5 years
-        of experience in Python programming and Backend programming. (more about me and my stacks here!)
-    </p>
-    <p>
-    I do photography (mostly landscape) in my free time. feel free to check out my latest photos in the Photo Gallery.
-    </p>
-    <p>Website powered by Django!</p>
+    <p>Hello!</p>
+    <p>I'm Soheil, which is the name of a star (you can read more about it on
+        <a href="https://en.wikipedia.org/wiki/Lambda_Velorum">Wikipedia</a>),
+        though I often go by Sam. I have about one to two years of experience in Data Science, and around five
+        years of experience in Python and Backend development. (Learn more about me and my tech stack
+        <a href="{% url 'about_me' %}">here</a>!)</p>
+    <p>In my free time, I enjoy photography, especially landscapes.
+        Feel free to explore my latest photos in my humble <a href="{% url 'photo_gallery_index' %}">Photo Gallery</a>.</p>
+    <p>This website is powered by Django! (<a href="https://github.com/soheil-star01/myportfolio-django">Source code</a>)</p>
 {% endblock about_me %}
-{#{% block page_title %}#}
-{#    <h2>Blog Posts</h2>#}
-{#{% endblock page_title %}#}
 
 {% block page_content %}
 

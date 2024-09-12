@@ -24,6 +24,7 @@ urlpatterns = [
     path('blog/', include('blog.urls')),
     path('photo_gallery/', include('photo_gallery.urls')),
     path('', include('my_app.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
 # Serve blog images from /blog/ URL path
