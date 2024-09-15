@@ -188,7 +188,6 @@ jobs:
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
 
       - name: Use Docker Compose
-        uses: actions/checkout@v2
         run: |
           docker-compose down || true
           docker-compose pull
