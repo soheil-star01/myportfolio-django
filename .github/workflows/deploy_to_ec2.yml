@@ -144,7 +144,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: configs/terraform
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/feature/ci-cd' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
       - name: Set Output
