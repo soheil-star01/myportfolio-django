@@ -151,7 +151,6 @@ jobs:
         id: set-ip
         working-directory: configs/terraform
         run: |
-#          echo "NEWEC2PUBLICIP=$(terraform-bin output  -json | jq  -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
             NEWEC2PUBLICIP=$(terraform output -json | jq -r '.new_public_ip.value')
             INSTANCE_ID=$(terraform output -json | jq -r '.instance_id.value')
             echo "NEWEC2PUBLICIP=${NEWEC2PUBLICIP}" >> $GITHUB_OUTPUT
