@@ -151,27 +151,8 @@ jobs:
         id: set-ip
         working-directory: configs/terraform
         run: |
-          # Fetching the public IP and instance ID from terraform output
-          NEWEC2PUBLICIP=$(terraform output -json | jq -r '.new_public_ip.value')
-          INSTANCE_ID=$(terraform output -json | jq -r '.instance_id.value')
-      
-          # Log the raw output from Terraform for debugging
-          echo "Terraform outputs:"
-          terraform output -json
-      
-          # Check if the values are not empty or invalid
-          if [ -z "$NEWEC2PUBLICIP" ] || [ "$NEWEC2PUBLICIP" = "null" ]; then
-            echo "Error: Unable to retrieve 'new_public_ip'."
-            exit 1
-          fi
-          if [ -z "$INSTANCE_ID" ] || [ "$INSTANCE_ID" = "null" ]; then
-            echo "Error: Unable to retrieve 'instance_id'."
-            exit 1
-          fi
-      
-          # Setting the values in GitHub Action's output
-          echo "NEWEC2PUBLICIP=${NEWEC2PUBLICIP}" >> $GITHUB_OUTPUT
-          echo "INSTANCE_ID=${INSTANCE_ID}" >> $GITHUB_OUTPUT
+            NEWEC2PUBLICIP=$(terraform output -json | jq -r '.new_public_ip.value')
+            echo "NEWEC2PUBLICIP=${NEWEC2PUBLICIP}" >> $GITHUB_OUTPUT
 
       - name: Print Public IP
         run: |
@@ -187,13 +168,7 @@ jobs:
           echo "${delimiter}" >> "${GITHUB_OUTPUT}"   
 
       - name: Wait for EC2 to be ready
-        run: |
-          INSTANCE_ID=${{ steps.set-ip.outputs.INSTANCE_ID }}
-          echo "Waiting for instance $INSTANCE_ID to enter 'running' state..."
-          aws ec2 wait instance-running --instance-ids $INSTANCE_ID --region ${{ env.AWS_REGION }}
-          echo "Instance is now running. Waiting for status checks to pass..."
-          aws ec2 wait instance-status-ok --instance-ids $INSTANCE_ID --region ${{ env.AWS_REGION }}
-          echo "EC2 instance $INSTANCE_ID is ready."
+        run: sleep 100
 
   pull-docker-image:
     runs-on: ubuntu-latest
