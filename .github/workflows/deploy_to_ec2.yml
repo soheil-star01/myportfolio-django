@@ -10,7 +10,7 @@ permissions:
       pull-requests: write
 env:
   TF_LOG: INFO
-  AWS_REGION: "frankfurt"
+  AWS_REGION: "eu-central-1"
   APP_CONTAINER_NAME: "django_app"
   ECR_REPOSITORY: "django_app"
 jobs:
