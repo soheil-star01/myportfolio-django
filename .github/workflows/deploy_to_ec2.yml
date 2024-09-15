@@ -16,9 +16,6 @@ env:
 jobs:
   docker-creation:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
     defaults:
       run:
         shell: bash
