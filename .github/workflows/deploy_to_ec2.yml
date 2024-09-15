@@ -153,6 +153,10 @@ jobs:
         run: |
           echo "NEWEC2PUBLICIP=$(terraform-bin output  -json | jq  -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
 
+      - name: Print Public IP
+        run: |
+          echo "Public IP: ${{ steps.set-ip.outputs.NEWEC2PUBLICIP }}"
+
       - name: Set Output2
         id: set-ip2
         working-directory: configs/terraform
