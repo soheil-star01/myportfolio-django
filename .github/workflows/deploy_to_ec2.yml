@@ -182,6 +182,8 @@ jobs:
         run: |
           echo "I'm running on ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}" 
           echo "${{ needs.deploy.outputs.PRIVKEY }}" > ec2_private.pem
+          chmod 600 ec2_private.pem  # Make sure the key has the correct permissions
+          cat ec2_private.pem  # Optional: print the key for debugging (ensure it's valid PEM format)
 
       - name: SSH Action
         uses: appleboy/ssh-action@v1.0.0
