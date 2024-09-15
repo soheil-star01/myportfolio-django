@@ -130,7 +130,13 @@ jobs:
           echo "${delimiter}" >> "${GITHUB_OUTPUT}"
 
       - name: Wait for EC2 to be ready
-        run: sleep 300
+        run: |
+          INSTANCE_ID=${{ steps.set-ip.outputs.INSTANCE_ID }}
+          echo "Waiting for instance $INSTANCE_ID to enter 'running' state..."
+          aws ec2 wait instance-running --instance-ids $INSTANCE_ID --region ${{ env.AWS_REGION }}
+          echo "Instance is now running. Waiting for status checks to pass..."
+          aws ec2 wait instance-status-ok --instance-ids $INSTANCE_ID --region ${{ env.AWS_REGION }}
+          echo "EC2 instance $INSTANCE_ID is ready."
 
   pull-docker-image:
     runs-on: ubuntu-latest
@@ -162,11 +168,12 @@ jobs:
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
 
       - name: Use Docker Compose
-        uses: docker/compose-action@v3
+        uses: actions/checkout@v2
         with:
-          files: docker-compose.yml
-          command: up -d
-
+          run: |
+            docker-compose down || true
+            docker-compose pull
+            docker-compose up -d
 
       - name: Cleanup on Failure - Delete Key Pair, Security Group, and Instance
         if: failure()
