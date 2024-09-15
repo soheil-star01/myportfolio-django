@@ -77,23 +77,27 @@ jobs:
 
       - name: Terraform fmt
         id: fmt
-        run: terraform fmt -chdir=infra
+        working-directory: configs/terraform
+        run: terraform fmt
         continue-on-error: true
 
       - name: Terraform Init
         id: init
+        working-directory: configs/terraform
         env:
           AWS_BUCKET_NAME: "tf-state-manu16082023"
           AWS_BUCKET_KEY_NAME: "remote-state"
-        run: terraform init -chdir=configs/terraform -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${{env.AWS_BUCKET_KEY_NAME}}" -backend-config="region=${{env.AWS_REGION}}"
+        run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${{env.AWS_BUCKET_KEY_NAME}}" -backend-config="region=${{env.AWS_REGION}}"
 
       - name: Terraform Validate
         id: validate
-        run: terraform validate -chdir=configs/terraform -no-color
+        working-directory: configs/terraform
+        run: terraform validate -no-color
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -chdir=configs/terraform -no-color
+        working-directory: configs/terraform
+        run: terraform plan -no-color
         if: github.event_name == 'pull_request'
         continue-on-error: true
 
@@ -139,20 +143,23 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
+        working-directory: configs/terraform
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -chdir=configs/terraform -auto-approve -input=false
+        run: terraform apply -auto-approve -input=false
 
       - name: Set Output
         id: set-ip
+        working-directory: configs/terraform
         run: |
-          echo "NEWEC2PUBLICIP=$(terraform-bin -chdir=configs/terraform output  -json | jq  -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
+          echo "NEWEC2PUBLICIP=$(terraform-bin output  -json | jq  -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
 
       - name: Set Output2
         id: set-ip2
+        working-directory: configs/terraform
         run: |
           delimiter="$(openssl rand -hex 8)"
           echo "PRIVKEY<<${delimiter}" >> "${GITHUB_OUTPUT}"
-          echo "$(terraform-bin -chdir=configs/terraform output -json  | jq  -r '.ec2_private_key.value')" >> "${GITHUB_OUTPUT}"
+          echo "$(terraform-bin output -json  | jq  -r '.ec2_private_key.value')" >> "${GITHUB_OUTPUT}"
           echo "${delimiter}" >> "${GITHUB_OUTPUT}"   
 
   pull-docker-image:
