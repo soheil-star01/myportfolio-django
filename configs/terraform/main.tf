@@ -1,3 +1,26 @@
+resource "aws_security_group" "allow_ssh" {
+  name        = "allow_ssh"
+  description = "Allow SSH inbound traffic"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # WARNING: Open to all IPs. You can restrict this to your specific IP.
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"  # Allow all outbound traffic
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "allow_ssh"
+  }
+}
+
 resource "tls_private_key" "django_key_pair" {
   algorithm = "RSA"
   rsa_bits  = 2048
@@ -13,7 +36,7 @@ resource "aws_instance" "django_app" {
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.django_key_pair.key_name
   associate_public_ip_address = true
-
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
   tags = {
     Name = "DjangoApp"
   }
