@@ -168,7 +168,7 @@ jobs:
           echo "${delimiter}" >> "${GITHUB_OUTPUT}"
 
       - name: Wait for EC2 to be ready
-        run: sleep 100
+        run: sleep 300
 
   pull-docker-image:
     runs-on: ubuntu-latest
