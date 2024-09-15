@@ -52,3 +52,21 @@ output "private_key" {
   description = "The private key to access the EC2 instance"
   sensitive   = true
 }
+
+# Output EC2 instance ID
+output "instance_id" {
+  value = aws_instance.django_app.id
+  description = "The ID of the EC2 instance"
+}
+
+# Output security group ID
+output "security_group_id" {
+  value = aws_security_group.allow_ssh.id
+  description = "The ID of the security group"
+}
+
+# Output key pair name
+output "key_pair_name" {
+  value = aws_key_pair.django_key_pair.key_name
+  description = "The name of the key pair"
+}

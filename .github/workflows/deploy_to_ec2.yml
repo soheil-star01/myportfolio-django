@@ -57,6 +57,9 @@ jobs:
       NEWEC2PUBLICIP: ${{ steps.set-ip.outputs.NEWEC2PUBLICIP }}
       PRIVATEKEY: ${{ steps.privatekey.outputs.result }}
       PRIVKEY: ${{ steps.set-ip2.outputs.PRIVKEY }}
+      INSTANCE_ID: ${{ steps.set-ip.outputs.INSTANCE_ID }}
+      SECURITY_GROUP_ID: ${{ steps.set-ip.outputs.SECURITY_GROUP_ID }}
+      KEY_PAIR_NAME: ${{ steps.set-ip.outputs.KEY_PAIR_NAME }}
     defaults:
       run:
         shell: bash
@@ -94,50 +97,6 @@ jobs:
         working-directory: configs/terraform
         run: terraform validate -no-color
 
-      - name: Terraform Plan
-        id: plan
-        working-directory: configs/terraform
-        run: terraform plan -no-color
-        if: github.event_name == 'pull_request'
-        continue-on-error: true
-
-      - uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-            <details><summary>Validation Output</summary>
-      
-            \`\`\`\n
-            ${{ steps.validate.outputs.stdout }}
-            \`\`\`
-      
-            </details>
-      
-            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-      
-            <details><summary>Show Plan</summary>
-      
-            \`\`\`\n
-            ${process.env.PLAN}
-            \`\`\`
-      
-            </details>
-      
-            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-      
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
@@ -152,6 +111,9 @@ jobs:
         working-directory: configs/terraform
         run: |
           echo "NEWEC2PUBLICIP=$(terraform-bin output  -json | jq  -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
+          echo "INSTANCE_ID=$(terraform-bin output  -json | jq  -r '.instance_id.value')" >> $GITHUB_OUTPUT
+          echo "SECURITY_GROUP_ID=$(terraform-bin output  -json | jq  -r '.security_group_id.value')" >> $GITHUB_OUTPUT
+          echo "KEY_PAIR_NAME=$(terraform-bin output  -json | jq  -r '.key_pair_name.value')" >> $GITHUB_OUTPUT
 
       - name: Print Public IP
         run: |
@@ -199,14 +161,31 @@ jobs:
             # Log in to ECR to ensure the instance can pull the latest image
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
 
-            # Stop any existing containers (if any)
-            docker-compose down || true
+      - name: Use Docker Compose
+        uses: docker/compose-action@v3
+        with:
+          files: docker-compose.yml
+          command: up -d
 
-            # Pull the latest image from ECR
-            docker-compose pull
 
-            # Remove dangling images to free up space
-            docker rmi $(docker images --filter "dangling=true" -q --no-trunc) || true
+      - name: Cleanup on Failure - Delete Key Pair, Security Group, and Instance
+        if: failure()
+        run: |
+          # Delete EC2 instance
+          INSTANCE_ID=${{ needs.deploy.outputs.INSTANCE_ID }}
+          echo "Terminating EC2 instance $INSTANCE_ID..."
+          aws ec2 terminate-instances --instance-ids $INSTANCE_ID --region ${{ env.AWS_REGION }}
+          aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID --region ${{ env.AWS_REGION }}
+          echo "Instance $INSTANCE_ID terminated."
 
-            # Start the containers using docker-compose
-            docker-compose up -d
+          # Delete Security Group
+          SECURITY_GROUP_ID=${{ needs.deploy.outputs.SECURITY_GROUP_ID }}
+          echo "Deleting security group $SECURITY_GROUP_ID..."
+          aws ec2 delete-security-group --group-id $SECURITY_GROUP_ID --region ${{ env.AWS_REGION }}
+          echo "Security group $SECURITY_GROUP_ID deleted."
+
+          # Delete Key Pair
+          KEY_PAIR_NAME=${{ needs.deploy.outputs.KEY_PAIR_NAME }}
+          echo "Deleting key pair $KEY_PAIR_NAME..."
+          aws ec2 delete-key-pair --key-name $KEY_PAIR_NAME --region ${{ env.AWS_REGION }}
+          echo "Key pair $KEY_PAIR_NAME deleted."
