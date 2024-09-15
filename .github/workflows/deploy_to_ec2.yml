@@ -151,7 +151,11 @@ jobs:
         id: set-ip
         working-directory: configs/terraform
         run: |
-          echo "NEWEC2PUBLICIP=$(terraform-bin output  -json | jq  -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
+#          echo "NEWEC2PUBLICIP=$(terraform-bin output  -json | jq  -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
+            NEWEC2PUBLICIP=$(terraform output -json | jq -r '.new_public_ip.value')
+            INSTANCE_ID=$(terraform output -json | jq -r '.instance_id.value')
+            echo "NEWEC2PUBLICIP=${NEWEC2PUBLICIP}" >> $GITHUB_OUTPUT
+            echo "INSTANCE_ID=${INSTANCE_ID}" >> $GITHUB_OUTPUT
 
       - name: Print Public IP
         run: |
@@ -165,6 +169,15 @@ jobs:
           echo "PRIVKEY<<${delimiter}" >> "${GITHUB_OUTPUT}"
           echo "$(terraform-bin output -json  | jq  -r '.ec2_private_key.value')" >> "${GITHUB_OUTPUT}"
           echo "${delimiter}" >> "${GITHUB_OUTPUT}"   
+
+      - name: Wait for EC2 to be ready
+        run: |
+          INSTANCE_ID=${{ steps.set-ip.outputs.INSTANCE_ID }}
+          echo "Waiting for instance $INSTANCE_ID to enter 'running' state..."
+          aws ec2 wait instance-running --instance-ids $INSTANCE_ID --region ${{ env.AWS_REGION }}
+          echo "Instance is now running. Waiting for status checks to pass..."
+          aws ec2 wait instance-status-ok --instance-ids $INSTANCE_ID --region ${{ env.AWS_REGION }}
+          echo "EC2 instance $INSTANCE_ID is ready."
 
   pull-docker-image:
     runs-on: ubuntu-latest
@@ -189,7 +202,18 @@ jobs:
           port: "22"
           script: |
             whoami
-            docker stop ${{ env.APP_CONTAINER_NAME || 'app_deploy' }} || true  # Stop existing container, if any
-            docker rmi $(docker images --filter "dangling=true" -q --no-trunc)  # Remove dangling images
-            docker run --pull=always --rm --name ${{ env.APP_CONTAINER_NAME || 'app_deploy' }} \
-              -d -p 3000:3000 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
+
+            # Log in to ECR to ensure the instance can pull the latest image
+            aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+
+            # Stop any existing containers (if any)
+            docker-compose down || true
+
+            # Pull the latest image from ECR
+            docker-compose pull
+
+            # Remove dangling images to free up space
+            docker rmi $(docker images --filter "dangling=true" -q --no-trunc) || true
+
+            # Start the containers using docker-compose
+            docker-compose up -d
