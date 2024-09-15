@@ -151,10 +151,27 @@ jobs:
         id: set-ip
         working-directory: configs/terraform
         run: |
-            NEWEC2PUBLICIP=$(terraform output -json | jq -r '.new_public_ip.value')
-            INSTANCE_ID=$(terraform output -json | jq -r '.instance_id.value')
-            echo "NEWEC2PUBLICIP=${NEWEC2PUBLICIP}" >> $GITHUB_OUTPUT
-            echo "INSTANCE_ID=${INSTANCE_ID}" >> $GITHUB_OUTPUT
+          # Fetching the public IP and instance ID from terraform output
+          NEWEC2PUBLICIP=$(terraform output -json | jq -r '.new_public_ip.value')
+          INSTANCE_ID=$(terraform output -json | jq -r '.instance_id.value')
+      
+          # Log the raw output from Terraform for debugging
+          echo "Terraform outputs:"
+          terraform output -json
+      
+          # Check if the values are not empty or invalid
+          if [ -z "$NEWEC2PUBLICIP" ] || [ "$NEWEC2PUBLICIP" = "null" ]; then
+            echo "Error: Unable to retrieve 'new_public_ip'."
+            exit 1
+          fi
+          if [ -z "$INSTANCE_ID" ] || [ "$INSTANCE_ID" = "null" ]; then
+            echo "Error: Unable to retrieve 'instance_id'."
+            exit 1
+          fi
+      
+          # Setting the values in GitHub Action's output
+          echo "NEWEC2PUBLICIP=${NEWEC2PUBLICIP}" >> $GITHUB_OUTPUT
+          echo "INSTANCE_ID=${INSTANCE_ID}" >> $GITHUB_OUTPUT
 
       - name: Print Public IP
         run: |
