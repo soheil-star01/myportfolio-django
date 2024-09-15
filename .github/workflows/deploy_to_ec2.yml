@@ -163,11 +163,12 @@ jobs:
         run: |
           delimiter="$(openssl rand -hex 8)"
           echo "PRIVKEY<<${delimiter}" >> "${GITHUB_OUTPUT}"
-          echo "$(terraform-bin output -json  | jq  -r '.ec2_private_key.value')" >> "${GITHUB_OUTPUT}"
-          echo "${delimiter}" >> "${GITHUB_OUTPUT}"   
+          # Fetch the private key from terraform-bin output
+          echo "$(terraform-bin output -json | jq -r '.private_key.value')" >> "${GITHUB_OUTPUT}"
+          echo "${delimiter}" >> "${GITHUB_OUTPUT}"
 
       - name: Wait for EC2 to be ready
-        run: sleep 300
+        run: sleep 100
 
   pull-docker-image:
     runs-on: ubuntu-latest
