@@ -28,10 +28,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'http://samdolat.com']
 
+# CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", 'http://127.0.0.1:8000']
 
 # Application definition
 
@@ -45,7 +46,7 @@ INSTALLED_APPS = [
     "photo_gallery.apps.PhotoGalleryConfig",
     "blog.apps.BlogConfig",
     "my_app.apps.MyAppConfig",
-    'ckeditor'
+    'django_ckeditor_5'
 ]
 
 MIDDLEWARE = [
@@ -125,13 +126,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'  # The URL to access static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # The directory where static files will be collected
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '')
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 CKEDITOR_UPLOAD_PATH = "uploads/"

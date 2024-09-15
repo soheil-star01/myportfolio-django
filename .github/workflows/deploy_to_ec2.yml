@@ -1,24 +1,181 @@
-name: Push-to-EC2
-
-# Trigger deployment only on push to master branch
+name: "Github action"
 on:
   push:
     branches:
-      - main
-
+      - feature/ci-cd
+  pull_request:
+permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+env:
+  TF_LOG: INFO
+  AWS_REGION: "frankfurt"
+  APP_CONTAINER_NAME: "django_app"
+  ECR_REPOSITORY: "django_app"
 jobs:
-  deploy:
-    name: Deploy to EC2 on master branch push
+  docker-creation:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
     steps:
-      - name: Checkout the files
-        uses: actions/checkout@v2
+      - name: Git checkout
+        uses: actions/checkout@v3    
 
-      - name: Deploy to Server 1
-        uses: easingthemes/ssh-deploy@main
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+            role-to-assume: ${{ sectrets.AWS_ROLE }}
+            aws-region: ${{ env.AWS_REGION }}
+  
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1.7.0
+        with:
+          mask-password: 'true'
+  
+      - name: Build and push image to Amazon ECR
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.EC2_HOST }}
-          REMOTE_USER: ${{ secrets.EC2_USER }}
-          TARGET: ${{ secrets.EC2_TARGET }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: django_app
+          IMAGE_TAG: latest
+        run: |
+          echo $ECR_REGISTRY  && echo $ECR_REPOSITORY && echo $IMAGE_TAG
+          docker build -t $ECR_REPOSITORY .
+          docker tag $ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY
+  deploy:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: [docker-creation]
+    outputs:
+      NEWEC2PUBLICIP: ${{ steps.set-ip.outputs.NEWEC2PUBLICIP }}
+      PRIVATEKEY: ${{ steps.privatekey.outputs.result }}
+      PRIVKEY: ${{ steps.set-ip2.outputs.PRIVKEY }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -chdir=infra
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        env:
+          AWS_BUCKET_NAME: "tf-state-manu16082023"
+          AWS_BUCKET_KEY_NAME: "remote-state"
+        run: terraform init -chdir=configs/terraform -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${{env.AWS_BUCKET_KEY_NAME}}" -backend-config="region=${{env.AWS_REGION}}"
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -chdir=configs/terraform -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -chdir=configs/terraform -no-color
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            <details><summary>Validation Output</summary>
+      
+            \`\`\`\n
+            ${{ steps.validate.outputs.stdout }}
+            \`\`\`
+      
+            </details>
+      
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+      
+            <details><summary>Show Plan</summary>
+      
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+      
+            </details>
+      
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+      
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -chdir=configs/terraform -auto-approve -input=false
+
+      - name: Set Output
+        id: set-ip
+        run: |
+          echo "NEWEC2PUBLICIP=$(terraform-bin -chdir=configs/terraform output  -json | jq  -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
+
+      - name: Set Output2
+        id: set-ip2
+        run: |
+          delimiter="$(openssl rand -hex 8)"
+          echo "PRIVKEY<<${delimiter}" >> "${GITHUB_OUTPUT}"
+          echo "$(terraform-bin -chdir=configs/terraform output -json  | jq  -r '.ec2_private_key.value')" >> "${GITHUB_OUTPUT}"
+          echo "${delimiter}" >> "${GITHUB_OUTPUT}"   
+
+  pull-docker-image:
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps:
+      - name: Use the value
+        id: use_value
+        run: |
+          echo "I'm running on ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}" 
+          echo "${{ needs.deploy.outputs.PRIVKEY }}" > ec2_private.pem
+
+      - name: SSH Action
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          username: "ubuntu"
+          key_path:  ec2_private.pem
+          port: "22"
+          script: |
+            whoami
+            docker stop ${{ env.APP_CONTAINER_NAME || 'app_deploy' }} || true  # Stop existing container, if any
+            docker rmi $(docker images --filter "dangling=true" -q --no-trunc)  # Remove dangling images
+            docker run --pull=always --rm --name ${{ env.APP_CONTAINER_NAME || 'app_deploy' }} \
+              -d -p 3000:3000 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest

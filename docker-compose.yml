@@ -1,0 +1,37 @@
+version: '1'
+
+services:
+
+  django_init:
+    build: .
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py createsuperuser --noinput"
+    env_file:
+      - .env
+    volumes:
+      - django_data:/django_app
+
+  django_app:
+    build: .
+    command: bash -c "python manage.py collectstatic --noinput && gunicorn -c configs/gunicorn/gunicorn.conf.py"
+    volumes:
+      - django_data:/django_app
+      - ./logs:/django_app/logs
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - django_init
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./configs/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - django_data:/django_app
+    depends_on:
+      - django_app
+
+volumes:
+  django_data:
