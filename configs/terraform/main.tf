@@ -6,13 +6,13 @@ resource "aws_security_group" "allow_ssh" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # WARNING: Open to all IPs. You can restrict this to your specific IP.
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"  # Allow all outbound traffic
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -32,7 +32,7 @@ resource "aws_key_pair" "django_key_pair" {
 }
 
 resource "aws_instance" "django_app" {
-  ami                    = "ami-0e04bcbe83a83792e"
+  ami                    = "ami-04f76ebf53292ef4d"
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.django_key_pair.key_name
   associate_public_ip_address = true
@@ -53,19 +53,16 @@ output "private_key" {
   sensitive   = true
 }
 
-# Output EC2 instance ID
 output "instance_id" {
   value = aws_instance.django_app.id
   description = "The ID of the EC2 instance"
 }
 
-# Output security group ID
 output "security_group_id" {
   value = aws_security_group.allow_ssh.id
   description = "The ID of the security group"
 }
 
-# Output key pair name
 output "key_pair_name" {
   value = aws_key_pair.django_key_pair.key_name
   description = "The name of the key pair"
