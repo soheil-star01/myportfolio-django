@@ -152,7 +152,7 @@ jobs:
           echo "I'm running on ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}" 
           echo "${{ needs.deploy.outputs.PRIVKEY }}" > ec2_private.pem
           chmod 600 ec2_private.pem  # Make sure the key has the correct permissions
-          cat ec2_private.pem  # Optional: print the key for debugging (ensure it's valid PEM format)
+#          cat ec2_private.pem  # Optional: print the key for debugging (ensure it's valid PEM format)
 
       - name: SSH Action
         uses: appleboy/ssh-action@v1.0.0
@@ -168,6 +168,9 @@ jobs:
             sudo yum install -y docker
             sudo service docker start
             sudo usermod -a -G docker ec2-user
+                 
+            newgrp docker
+
             sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
   
