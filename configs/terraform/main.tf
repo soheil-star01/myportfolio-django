@@ -1,5 +1,5 @@
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh2"
+  name        = "allow_ssh3"
   description = "Allow SSH inbound traffic"
 
   ingress {
@@ -27,7 +27,7 @@ resource "tls_private_key" "django_key_pair" {
 }
 
 resource "aws_key_pair" "django_key_pair" {
-  key_name   = "django-key2"
+  key_name   = "django-key3"
   public_key = tls_private_key.django_key_pair.public_key_openssh
 }
 
