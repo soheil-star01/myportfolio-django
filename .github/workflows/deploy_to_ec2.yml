@@ -14,49 +14,49 @@ env:
   APP_CONTAINER_NAME: "django_app"
   ECR_REPOSITORY: "django_app"
 jobs:
-  docker-creation:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3    
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-            role-to-assume: ${{ secrets.AWS_ROLE }}
-            aws-region: ${{ env.AWS_REGION }}
+#  docker-creation:
+#    runs-on: ubuntu-latest
+#    permissions:
+#      id-token: write
+#      contents: read
+#    defaults:
+#      run:
+#        shell: bash
+#        working-directory: .
+#    steps:
+#      - name: Git checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v2
+#        with:
+#            role-to-assume: ${{ secrets.AWS_ROLE }}
+#            aws-region: ${{ env.AWS_REGION }}
   
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1.7.0
-        with:
-          mask-password: 'true'
+#      - name: Login to Amazon ECR
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1.7.0
+#        with:
+#          mask-password: 'true'
   
-      # Step to build all services defined in docker-compose.yml
-      - name: Build Docker images using Docker Compose
-        run: |
-          docker-compose -f docker-compose.yml build
-
-      # Step to tag and push all images built by docker-compose
-      - name: Tag and Push Images to ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: latest
-        run: |
-          # Tag and push Django app image
-          docker tag django_app:latest $ECR_REGISTRY/django_app:latest
-          docker push $ECR_REGISTRY/django_app:latest
-
-          # Tag and push Nginx image
-          docker tag nginx:latest $ECR_REGISTRY/nginx:latest
-          docker push $ECR_REGISTRY/nginx:latest
+#      # Step to build all services defined in docker-compose.yml
+#      - name: Build Docker images using Docker Compose
+#        run: |
+#          docker-compose -f docker-compose.yml build
+#
+#      # Step to tag and push all images built by docker-compose
+#      - name: Tag and Push Images to ECR
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          IMAGE_TAG: latest
+#        run: |
+#          # Tag and push Django app image
+#          docker tag django_app:latest $ECR_REGISTRY/django_app:latest
+#          docker push $ECR_REGISTRY/django_app:latest
+#
+#          # Tag and push Nginx image
+#          docker tag nginx:latest $ECR_REGISTRY/nginx:latest
+#          docker push $ECR_REGISTRY/nginx:latest
   deploy:
     runs-on: ubuntu-latest
     permissions: write-all
@@ -173,6 +173,9 @@ jobs:
             whoami
         
             sudo yum update -y
+            # Install git if it's not installed
+            sudo yum install -y git
+
             sudo yum install -y docker
             sudo service docker start
             sudo usermod -aG docker ec2-user  # Add user to docker group
@@ -185,8 +188,13 @@ jobs:
             sudo systemctl enable docker
             sudo systemctl restart docker
 
-      # Step 2: Reconnect to the server and run Docker commands (new session with proper permissions)
-      - name: Pull Docker Image and Run Docker Compose
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon EC2 via SSH and clone the repository
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
@@ -196,22 +204,45 @@ jobs:
           script: |
             whoami
             
-            # Verify Docker and Docker Compose are installed
             docker --version
             docker-compose --version
-      
-            # Set AWS credentials as environment variables
-            export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      
-            # Log in to ECR to pull Docker images
-            aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+        
+            # Clone the Git repository
+            git clone https://github.com/soheil-star01/myportfolio-django.git /home/ec2-user/myportfolio-django
             
-            # Pull the latest images defined in docker-compose.yml from ECR
-            docker-compose pull
-      
-            # Start the containers using Docker Compose
+            # Change directory to the cloned repo
+            cd /home/ec2-user/myportfolio-django
+            
+            # Pull the latest images and start services using Docker Compose
+#            docker-compose pull
             docker-compose up -d
+#      # Step 2: Reconnect to the server and run Docker commands (new session with proper permissions)
+#      - name: Pull Docker Image and Run Docker Compose
+#        uses: appleboy/ssh-action@v1.0.0
+#        with:
+#          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+#          username: "ec2-user"
+#          key_path: ec2_private.pem
+#          port: "22"
+#          script: |
+#            whoami
+#
+#            # Verify Docker and Docker Compose are installed
+#            docker --version
+#            docker-compose --version
+#
+#            # Set AWS credentials as environment variables
+#            export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+#            export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#
+#            # Log in to ECR to pull Docker images
+#            aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+#
+#            # Pull the latest images defined in docker-compose.yml from ECR
+#            docker-compose pull
+#
+#            # Start the containers using Docker Compose
+#            docker-compose up -d
 
       - name: Cleanup on Failure - Delete Key Pair, Security Group, and Instance
         if: failure()
