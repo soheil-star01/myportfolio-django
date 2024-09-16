@@ -154,7 +154,7 @@ jobs:
           chmod 600 ec2_private.pem  # Make sure the key has the correct permissions
 #          cat ec2_private.pem  # Optional: print the key for debugging (ensure it's valid PEM format)
 
-      - name: SSH Action
+      - name: Install Docker and Set Up Permissions
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
@@ -163,31 +163,46 @@ jobs:
           port: "22"
           script: |
             whoami
-  
+        
             sudo yum update -y
             sudo yum install -y docker
             sudo service docker start
-            sudo usermod -a -G docker ec2-user
-                 
-            newgrp docker
-
+            sudo usermod -aG docker ec2-user  # Add user to docker group
+                       
+            # Install Docker Compose
             sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
-  
-            # Verify installation
-            aws --version
+        
+            # Enable Docker and restart the service
+            sudo systemctl enable docker
+            sudo systemctl restart docker
+
+      # Step 2: Reconnect to the server and run Docker commands (new session with proper permissions)
+      - name: Pull Docker Image and Run Docker Compose
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          username: "ec2-user"
+          key_path: ec2_private.pem
+          port: "22"
+          script: |
+            whoami
+            
+            # Verify Docker and Docker Compose are installed
             docker --version
             docker-compose --version
-  
+      
+            # Set AWS credentials as environment variables
             export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-  
+      
             # Log in to ECR to pull Docker images
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
             
+            # Pull the Docker image
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/django_app:latest
             
+            # Start the containers using Docker Compose
             docker-compose up -d
 
       - name: Cleanup on Failure - Delete Key Pair, Security Group, and Instance
