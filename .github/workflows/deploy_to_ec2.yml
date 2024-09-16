@@ -39,16 +39,24 @@ jobs:
         with:
           mask-password: 'true'
   
-      - name: Build and push image to Amazon ECR
+      # Step to build all services defined in docker-compose.yml
+      - name: Build Docker images using Docker Compose
+        run: |
+          docker-compose -f docker-compose.yml build
+
+      # Step to tag and push all images built by docker-compose
+      - name: Tag and Push Images to ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: django_app
           IMAGE_TAG: latest
         run: |
-          echo $ECR_REGISTRY  && echo $ECR_REPOSITORY && echo $IMAGE_TAG
-          docker build -t $ECR_REPOSITORY .
-          docker tag $ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY
+          # Tag and push Django app image
+          docker tag django_app:latest $ECR_REGISTRY/django_app:latest
+          docker push $ECR_REGISTRY/django_app:latest
+
+          # Tag and push Nginx image
+          docker tag nginx:latest $ECR_REGISTRY/nginx:latest
+          docker push $ECR_REGISTRY/nginx:latest
   deploy:
     runs-on: ubuntu-latest
     permissions: write-all
@@ -199,9 +207,9 @@ jobs:
             # Log in to ECR to pull Docker images
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
             
-            # Pull the Docker image
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/django_app:latest
-            
+            # Pull the latest images defined in docker-compose.yml from ECR
+            docker-compose pull
+      
             # Start the containers using Docker Compose
             docker-compose up -d
 
