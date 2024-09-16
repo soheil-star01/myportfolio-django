@@ -163,7 +163,7 @@ jobs:
             docker-compose --version
         
             # Clone the Git repository
-            git clone https://github.com/soheil-star01/myportfolio-django.git /home/ec2-user/myportfolio-django
+            git clone https://github.com/soheil-star01/myportfolio-django.git /home/ec2-user
             
             # Change directory to the cloned repo
             cd /home/ec2-user/myportfolio-django
