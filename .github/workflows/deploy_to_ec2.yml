@@ -158,7 +158,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
-          username: "ubuntu"
+          username: "ec2-user"
           key_path: ec2_private.pem
           port: "22"
           script: |
