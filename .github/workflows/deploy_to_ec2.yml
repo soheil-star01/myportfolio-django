@@ -182,9 +182,9 @@ jobs:
   
             # Log in to ECR to pull Docker images
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
-
-            docker-compose down || true
-            docker-compose pull
+            
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/django_app:latest
+            
             docker-compose up -d
 
       - name: Cleanup on Failure - Delete Key Pair, Security Group, and Instance
