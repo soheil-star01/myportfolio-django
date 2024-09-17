@@ -163,10 +163,12 @@ jobs:
             docker-compose --version
         
             # Clone the Git repository
-            git clone https://github.com/soheil-star01/myportfolio-django.git /home/ec2-user/
+            git clone -b feature/ci-cd https://github.com/soheil-star01/myportfolio-django.git
             
             # Change directory to the cloned repo
-            cd /home/ec2-user/myportfolio-django
+            cd myportfolio-django
+            
+            echo "${{secrets.DOT_ENV_FILE }}" > .env
             
             # Pull the latest images and start services using Docker Compose
             docker-compose up -d
