@@ -1,10 +1,17 @@
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh3"
+  name        = "allow_ssh4"
   description = "Allow SSH inbound traffic"
 
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -27,7 +34,7 @@ resource "tls_private_key" "django_key_pair" {
 }
 
 resource "aws_key_pair" "django_key_pair" {
-  key_name   = "django-key3"
+  key_name   = "django-key4"
   public_key = tls_private_key.django_key_pair.public_key_openssh
 }
 
