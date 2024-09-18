@@ -162,13 +162,17 @@ jobs:
             docker --version
             docker-compose --version
         
-            # Clone the Git repository
             git clone -b feature/ci-cd https://github.com/soheil-star01/myportfolio-django.git
             
-            # Change directory to the cloned repo
             cd myportfolio-django
             
-            echo "${{secrets.DOT_ENV_FILE }}" > .env
+            printf "%s" "${{ secrets.DOT_ENV_FILE }}" > .env
+    
+            if [ -f .env ]; then
+              echo ".env file created successfully"
+            else
+              echo "Failed to create .env file"
+            fi
+
             
-            # Pull the latest images and start services using Docker Compose
             docker-compose up -d
