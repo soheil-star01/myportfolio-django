@@ -4,7 +4,7 @@ services:
 
   django_init:
     build: .
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py createsuperuser --noinput"
+    command: bash -c "python manage.py makemigrations && python manage.py makemigrations blog && python manage.py makemigrations photo_gallery && python manage.py migrate && python manage.py createsuperuser --noinput"
     env_file:
       - .env
     volumes:
