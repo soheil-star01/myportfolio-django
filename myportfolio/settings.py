@@ -28,14 +28,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 if os.environ.get('RUNNING_MODE') == 'Local':
     ALLOWED_HOSTS = ['*']
 else:
     ALLOWED_HOSTS = ['http://samdolat.com', 'samdolat.com', 'https://samdolat.com']
-
-# CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", 'http://127.0.0.1:8000']
+    CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']
 
 # Application definition
 
@@ -125,6 +124,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
