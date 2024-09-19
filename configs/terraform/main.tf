@@ -39,9 +39,6 @@ resource "tls_private_key" "django_key_pair" {
 resource "aws_key_pair" "django_key_pair" {
   key_name   = "django-key"
   public_key = tls_private_key.django_key_pair.public_key_openssh
-  lifecycle {
-    ignore_changes = all
-  }
 }
 
 resource "aws_instance" "django_app" {
