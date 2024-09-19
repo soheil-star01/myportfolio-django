@@ -1,8 +1,8 @@
-name: "Github action"
+name: "ci-cd for Sam's personal website"
 on:
   push:
     branches:
-      - feature/ci-cd
+      - main
   pull_request:
 permissions:
       id-token: write
@@ -67,7 +67,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: configs/terraform
-        if: github.ref == 'refs/heads/feature/ci-cd' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
       - name: Set Output
@@ -162,7 +162,7 @@ jobs:
             docker --version
             docker-compose --version
         
-            git clone -b feature/ci-cd https://github.com/soheil-star01/myportfolio-django.git
+            git clone https://github.com/soheil-star01/myportfolio-django.git
             
             cd myportfolio-django
             
@@ -171,6 +171,7 @@ jobs:
             DJANGO_SUPERUSER_USERNAME="${{ secrets.DJANGO_SUPERUSER_USERNAME }}"
             DJANGO_SUPERUSER_PASSWORD="${{ secrets.DJANGO_SUPERUSER_PASSWORD }}"
             DJANGO_SUPERUSER_EMAIL="${{ secrets.DJANGO_SUPERUSER_EMAIL }}"
+            LETSENCRYPT_EMAIL="${{ secrets.LETSENCRYPT_EMAIL }}"
             EOF
     
             if [ -f .env ]; then
@@ -180,4 +181,7 @@ jobs:
             fi
 
             
+            docker-compose down
             docker-compose up -d
+            docker-compose run certbot
+            docker-compose restart nginx

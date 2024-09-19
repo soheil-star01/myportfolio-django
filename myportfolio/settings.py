@@ -30,7 +30,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://samdolat.com', 'samdolat.com']
+if os.environ.get('RUNNING_MODE') == 'Local':
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = ['http://samdolat.com', 'samdolat.com', 'https://samdolat.com']
 
 # CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", 'http://127.0.0.1:8000']
 

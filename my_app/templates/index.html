@@ -14,13 +14,22 @@
 {% block page_content %}
 
     <h2>Latest blog post</h2>
-    <img src={{ last_blog_post.thumbnail_image }}>
-    <h3><a href="{% url 'blog_detail' last_blog_post.pk %}">{{ last_blog_post.title }}</a></h3>
-    <small>{{ last_blog_post.date_posted }}</small>
-    <p>{{ last_blog_post.summarized_content | slice:":400" }}...</p>
+    {% if last_blog_post %}
+        <img src="{{ last_blog_post.thumbnail_image }}" alt="Thumbnail image">
+        <h3><a href="{% url 'blog_detail' last_blog_post.pk %}">{{ last_blog_post.title }}</a></h3>
+        <small>{{ last_blog_post.date_posted }}</small>
+        <p>{{ last_blog_post.summarized_content | slice:":400" }}...</p>
+    {% else %}
+        <p>No blog posts available at the moment.</p>
+    {% endif %}
 
     <h2>Latest photo</h2>
-    <a href="{% url 'photo_gallery_detail' last_photo_gallery.pk %}">
-        <img src="{{ last_photo_gallery.thumbnail_image.url }}">
-    </a>
+    {% if last_photo_gallery %}
+        <a href="{% url 'photo_gallery_detail' last_photo_gallery.pk %}">
+            <img src="{{ last_photo_gallery.thumbnail_image.url }}" alt="Gallery thumbnail">
+        </a>
+    {% else %}
+        <p>No photos available at the moment.</p>
+    {% endif %}
+
 {% endblock page_content %}

@@ -5,11 +5,15 @@
 
 {% block page_content %}
     {% block posts %}
-        {% for post in posts %}
-            <img src={{ post.thumbnail_image.url }}>
-            <h3><a href="{% url 'blog_detail' post.pk %}">{{ post.title }}</a></h3>
-            <small>{{ post.date_posted }}</small>
-            <p>{{ post.summarized_content | slice:":400" }}...</p>
-        {% endfor %}
+        {% if posts %}
+            {% for post in posts %}
+                <img src="{{ post.thumbnail_image.url }}" alt="Thumbnail image">
+                <h3><a href="{% url 'blog_detail' post.pk %}">{{ post.title }}</a></h3>
+                <small>{{ post.date_posted }}</small>
+                <p>{{ post.summarized_content | slice:":400" }}...</p>
+            {% endfor %}
+        {% else %}
+            <p>No blog posts available at the moment.</p>
+        {% endif %}
     {% endblock posts %}
 {% endblock page_content %}

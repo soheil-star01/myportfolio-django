@@ -1,5 +1,5 @@
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh5"
+  name        = "allow_ssh"
   description = "Allow SSH inbound traffic"
 
   ingress {
@@ -22,6 +22,9 @@ resource "aws_security_group" "allow_ssh" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 
   tags = {
     Name = "allow_ssh"
@@ -34,8 +37,12 @@ resource "tls_private_key" "django_key_pair" {
 }
 
 resource "aws_key_pair" "django_key_pair" {
-  key_name   = "django-key5"
+  key_name   = "django-key"
   public_key = tls_private_key.django_key_pair.public_key_openssh
+  lifecycle {
+    create_before_destroy = true
+  }
+
 }
 
 resource "aws_instance" "django_app" {
@@ -48,6 +55,24 @@ resource "aws_instance" "django_app" {
     Name = "DjangoApp"
   }
 }
+
+data "aws_route53_zone" "selected" {
+  name         = "samdolat.com."
+  private_zone = false
+}
+
+resource "aws_route53_record" "django_dns" {
+  zone_id = data.aws_route53_zone.selected.zone_id
+  name    = "samdolat.com"
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.django_app.public_ip]
+}
+
+output "dns_name" {
+  value = aws_route53_record.django_dns.fqdn
+}
+
 
 output "new_public_ip" {
   value       = aws_instance.django_app.public_ip
