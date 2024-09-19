@@ -23,7 +23,7 @@ resource "aws_security_group" "allow_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   lifecycle {
-    create_before_destroy = true
+    ignore_changes = all
   }
 
   tags = {
@@ -40,9 +40,8 @@ resource "aws_key_pair" "django_key_pair" {
   key_name   = "django-key"
   public_key = tls_private_key.django_key_pair.public_key_openssh
   lifecycle {
-    create_before_destroy = true
+    ignore_changes = all
   }
-
 }
 
 resource "aws_instance" "django_app" {
