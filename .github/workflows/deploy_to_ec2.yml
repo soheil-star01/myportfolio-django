@@ -69,6 +69,13 @@ jobs:
           SG_ID=$(aws ec2 describe-security-groups --filters "Name=group-name,Values=allow_ssh" --query 'SecurityGroups[0].GroupId' --output text)
           terraform import aws_security_group.allow_ssh $SG_ID || true
 
+      - name: Terraform Import Route 53 DNS Record
+        working-directory: configs/terraform
+        run: |
+          ZONE_ID=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='samdolat.com.'].Id" --output text | cut -d'/' -f3)
+          terraform import aws_route53_record.django_dns ${ZONE_ID}_samdolat.com_A || true
+
+
       - name: Terraform Validate
         id: validate
         working-directory: configs/terraform
