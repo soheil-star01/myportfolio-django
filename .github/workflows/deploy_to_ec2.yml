@@ -156,7 +156,7 @@ jobs:
         with:
           host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
           username: "ec2-user"
-          key_path: ${{ needs.deploy.outputs.PRIVKEY }}
+          key_path: "ec2_private.pem"
           port: "22"
           script: |
             whoami
@@ -188,7 +188,7 @@ jobs:
         with:
           host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
           username: "ec2-user"
-          key_path: ${{ needs.deploy.outputs.PRIVKEY }}
+          key_path: "ec2_private.pem"
           port: "22"
           script: |
             whoami
