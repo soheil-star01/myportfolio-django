@@ -39,6 +39,15 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Delete existing Key Pair (if exists)
+        run: |
+          if aws ec2 describe-key-pairs --key-name "django-key"; then
+            echo "Deleting existing key pair..."
+            aws ec2 delete-key-pair --key-name "django-key"
+          else
+            echo "Key pair 'django-key' does not exist, continuing..."
+          fi
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
@@ -147,7 +156,7 @@ jobs:
         with:
           host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
           username: "ec2-user"
-          key_path: ec2_private.pem
+          key_path: ${{ needs.deploy.outputs.PRIVKEY }}
           port: "22"
           script: |
             whoami
@@ -179,7 +188,7 @@ jobs:
         with:
           host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
           username: "ec2-user"
-          key_path: ec2_private.pem
+          key_path: ${{ needs.deploy.outputs.PRIVKEY }}
           port: "22"
           script: |
             whoami
