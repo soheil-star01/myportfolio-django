@@ -161,14 +161,14 @@ jobs:
       - name: Use the value
         id: use_value
         run: |
-          echo "I'm running on ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}" 
-          echo "${{ needs.deploy.outputs.PRIVKEY }}" > ec2_private.pem
+          echo "I'm running on ${{ needs.preparation.outputs.NEWEC2PUBLICIP }}" 
+          echo "${{ needs.preparation.outputs.PRIVKEY }}" > ec2_private.pem
           chmod 600 ec2_private.pem  # Make sure the key has the correct permissions
 
       - name: Install Docker and Set Up Permissions
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          host: ${{ needs.preparation.outputs.NEWEC2PUBLICIP }}
           username: "ec2-user"
           key_path: "ec2_private.pem"
           port: "22"
@@ -193,7 +193,7 @@ jobs:
       - name: Login to Amazon EC2 via SSH and clone the repository
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          host: ${{ needs.preparation.outputs.NEWEC2PUBLICIP }}
           username: "ec2-user"
           key_path: "ec2_private.pem"
           port: "22"
@@ -229,7 +229,7 @@ jobs:
       - name: Run Certbot to Obtain SSL Certificates
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          host: ${{ needs.preparation.outputs.NEWEC2PUBLICIP }}
           username: "ec2-user"
           key_path: "ec2_private.pem"
           port: "22"
@@ -241,7 +241,7 @@ jobs:
       - name: Switch Nginx to HTTPS mode
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          host: ${{ needs.preparation.outputs.NEWEC2PUBLICIP }}
           username: "ec2-user"
           key_path: "ec2_private.pem"
           port: "22"
@@ -255,7 +255,7 @@ jobs:
       - name: Final Nginx Restart with HTTPS
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          host: ${{ needs.preparation.outputs.NEWEC2PUBLICIP }}
           username: "ec2-user"
           key_path: "ec2_private.pem"
           port: "22"
