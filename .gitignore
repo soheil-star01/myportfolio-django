@@ -5,3 +5,5 @@ db.sqlite3
 */migrations
 */2024
 media/*/*
+static
+logs

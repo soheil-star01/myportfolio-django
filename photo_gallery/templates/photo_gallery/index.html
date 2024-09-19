@@ -27,14 +27,18 @@
         <p>Filtered by tag: {{ tag_name }}</p>
     {% endif %}
     {% block photos %}
-        <div class="photo-grid">
-            {% for photo in photos %}
-                <div class="photo-item">
-                    <a href="{% url 'photo_gallery_detail' photo.pk %}">
-                        <img src={{ photo.thumbnail_image.url }}>
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
+        {% if photos %}
+            <div class="photo-grid">
+                {% for photo in photos %}
+                    <div class="photo-item">
+                        <a href="{% url 'photo_gallery_detail' photo.pk %}">
+                            <img src={{ photo.thumbnail_image.url }}>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No photo available at the moment.</p>
+        {% endif %}
     {% endblock photos %}
 {% endblock page_content %}
