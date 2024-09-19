@@ -14,7 +14,7 @@ env:
   APP_CONTAINER_NAME: "django_app"
   ECR_REPOSITORY: "django_app"
 jobs:
-  prepration:
+  preparation:
     runs-on: ubuntu-latest
     permissions: write-all
     outputs:
@@ -152,7 +152,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [deploy]
+    needs: [preparation]
     defaults:
       run:
         shell: bash
