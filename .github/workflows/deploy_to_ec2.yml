@@ -1,4 +1,4 @@
-name: "ci-cd for Sam's personal website"
+name: "ci-cd"
 on:
   push:
     branches:
@@ -14,7 +14,7 @@ env:
   APP_CONTAINER_NAME: "django_app"
   ECR_REPOSITORY: "django_app"
 jobs:
-  deploy:
+  prepration:
     runs-on: ubuntu-latest
     permissions: write-all
     outputs:
@@ -29,6 +29,9 @@ jobs:
         shell: bash
         working-directory: .
     steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
       - name: Git checkout
         uses: actions/checkout@v3
 
@@ -65,13 +68,11 @@ jobs:
           AWS_BUCKET_KEY_NAME: "remote-state"
         run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${{env.AWS_BUCKET_KEY_NAME}}" -backend-config="region=${{env.AWS_REGION}}"
 
-      # Import the existing key pair before applying Terraform
       - name: Terraform Import Key Pair
         working-directory: configs/terraform
         run: |
           terraform import aws_key_pair.django_key_pair django-key || true
 
-      # Import the existing security group before applying Terraform
       - name: Terraform Import Security Group
         working-directory: configs/terraform
         run: |
@@ -83,7 +84,6 @@ jobs:
         run: |
           ZONE_ID=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='samdolat.com.'].Id" --output text | cut -d'/' -f3)
           terraform import aws_route53_record.django_dns ${ZONE_ID}_samdolat.com_A || true
-
 
       - name: Terraform Validate
         id: validate
@@ -108,11 +108,25 @@ jobs:
         id: set-ip
         working-directory: configs/terraform
         run: |
-          echo "NEWEC2PUBLICIP=$(terraform-bin output  -json | jq  -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
-          echo "INSTANCE_ID=$(terraform-bin output  -json | jq  -r '.instance_id.value')" >> $GITHUB_OUTPUT
-          echo "SECURITY_GROUP_ID=$(terraform-bin output  -json | jq  -r '.security_group_id.value')" >> $GITHUB_OUTPUT
-          echo "KEY_PAIR_NAME=$(terraform-bin output  -json | jq  -r '.key_pair_name.value')" >> $GITHUB_OUTPUT
+          echo "NEWEC2PUBLICIP=$(terraform-bin output -json | jq -r '.new_public_ip.value')" >> $GITHUB_OUTPUT
+          echo "INSTANCE_ID=$(terraform-bin output -json | jq -r '.instance_id.value')" >> $GITHUB_OUTPUT
+          echo "SECURITY_GROUP_ID=$(terraform-bin output -json | jq -r '.security_group_id.value')" >> $GITHUB_OUTPUT
+          echo "KEY_PAIR_NAME=$(terraform-bin output -json | jq -r '.key_pair_name.value')" >> $GITHUB_OUTPUT
 
+      - name: Update Route 53 DNS Record
+        run: |
+          ZONE_ID=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='samdolat.com.'].Id" --output text | cut -d'/' -f3)
+          aws route53 change-resource-record-sets --hosted-zone-id $ZONE_ID --change-batch '{
+            "Changes": [{
+              "Action": "UPSERT",
+              "ResourceRecordSet": {
+                "Name": "samdolat.com",
+                "Type": "A",
+                "TTL": 300,
+                "ResourceRecords": [{"Value": "'"${{ steps.set-ip.outputs.NEWEC2PUBLICIP }}"'"}]
+              }
+            }]
+          }'
       - name: Print Public IP
         run: |
           echo "Public IP: ${{ steps.set-ip.outputs.NEWEC2PUBLICIP }}"
@@ -136,7 +150,7 @@ jobs:
           aws ec2 wait instance-status-ok --instance-ids $INSTANCE_ID --region ${{ env.AWS_REGION }}
           echo "EC2 instance $INSTANCE_ID is ready."
 
-  pull-docker-image:
+  deploy:
     runs-on: ubuntu-latest
     needs: [deploy]
     defaults:
@@ -160,20 +174,13 @@ jobs:
           port: "22"
           script: |
             whoami
-        
             sudo yum update -y
-            # Install git if it's not installed
             sudo yum install -y git
-
             sudo yum install -y docker
             sudo service docker start
             sudo usermod -aG docker ec2-user  # Add user to docker group
-                       
-            # Install Docker Compose
             sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
-        
-            # Enable Docker and restart the service
             sudo systemctl enable docker
             sudo systemctl restart docker
 
@@ -192,14 +199,13 @@ jobs:
           port: "22"
           script: |
             whoami
-            
             docker --version
             docker-compose --version
-        
+            
             git clone https://github.com/soheil-star01/myportfolio-django.git
-            
             cd myportfolio-django
-            
+    
+            # Prepare environment for Django app
             cat <<EOF > .env
             SECRET_KEY="${{ secrets.SECRET_KEY }}"
             DJANGO_SUPERUSER_USERNAME="${{ secrets.DJANGO_SUPERUSER_USERNAME }}"
@@ -207,15 +213,52 @@ jobs:
             DJANGO_SUPERUSER_EMAIL="${{ secrets.DJANGO_SUPERUSER_EMAIL }}"
             LETSENCRYPT_EMAIL="${{ secrets.LETSENCRYPT_EMAIL }}"
             EOF
-    
+  
             if [ -f .env ]; then
               echo ".env file created successfully"
             else
               echo "Failed to create .env file"
             fi
-
             
-            docker-compose down
-            docker-compose up -d
+            # Copy initial HTTP Nginx config to run without SSL
+            cp ./configs/nginx/nginx.http.conf ./configs/nginx/nginx.conf
+            docker-compose up -d nginx
+
+
+      # Run Certbot to obtain SSL certificates
+      - name: Run Certbot to Obtain SSL Certificates
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          username: "ec2-user"
+          key_path: "ec2_private.pem"
+          port: "22"
+          script: |
+            cd myportfolio-django
             docker-compose run certbot
+
+      # Update Nginx configuration for HTTPS after Certbot issues certificates
+      - name: Switch Nginx to HTTPS mode
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          username: "ec2-user"
+          key_path: "ec2_private.pem"
+          port: "22"
+          script: |
+            cd myportfolio-django
+            # Switch to HTTPS Nginx config
+            cp ./configs/nginx/nginx.https.conf ./configs/nginx/nginx.conf
+            docker-compose restart nginx
+
+      # Restart Nginx with HTTPS
+      - name: Final Nginx Restart with HTTPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ needs.deploy.outputs.NEWEC2PUBLICIP }}
+          username: "ec2-user"
+          key_path: "ec2_private.pem"
+          port: "22"
+          script: |
+            cd myportfolio-django
             docker-compose restart nginx

@@ -1,3 +1,3 @@
-[![ci-cd for Sam's personal website](https://github.com/soheil-star01/myportfolio-django/actions/workflows/deploy_to_ec2.yml/badge.svg)](https://github.com/soheil-star01/myportfolio-django/actions/workflows/deploy_to_ec2.yml)
+[![ci-cd](https://github.com/soheil-star01/myportfolio-django/actions/workflows/deploy_to_ec2.yml/badge.svg)](https://github.com/soheil-star01/myportfolio-django/actions/workflows/deploy_to_ec2.yml)
 
 In progress ....
