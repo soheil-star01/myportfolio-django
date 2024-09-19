@@ -67,6 +67,9 @@ resource "aws_route53_record" "django_dns" {
   type    = "A"
   ttl     = 300
   records = [aws_instance.django_app.public_ip]
+  lifecycle {
+    ignore_changes = [records]
+  }
 }
 
 output "dns_name" {
