@@ -28,10 +28,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 if os.environ.get('RUNNING_MODE') == 'Local':
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 else:
     ALLOWED_HOSTS = ['http://samdolat.com', 'samdolat.com', 'https://samdolat.com']
     CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']

@@ -9,6 +9,9 @@
     <p>In my free time, I enjoy photography, especially landscapes.
         Feel free to explore my latest photos in my humble <a href="{% url 'photo_gallery_index' %}">Photo Gallery</a>.</p>
     <p>This website is powered by Django! (<a href="https://github.com/soheil-star01/myportfolio-django">Source code</a>)</p>
+<div>
+    {{ content|safe }}  <!-- Dynamic homepage content -->
+</div>
 {% endblock about_me %}
 
 {% block page_content %}
