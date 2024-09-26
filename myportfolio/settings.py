@@ -30,7 +30,12 @@ if os.environ.get('RUNNING_MODE') == 'Local':
     ALLOWED_HOSTS = ['*']
 else:
     ALLOWED_HOSTS = ['http://samdolat.com', 'samdolat.com', 'https://samdolat.com', 'localhost']
-    CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']
+    CSRF_TRUSTED_ORIGINS = [
+        'https://samdolat.com',
+        'https://www.samdolat.com',
+        'http://samdolat.com',
+        'http://www.samdolat.com'
+    ]
 
 # Application definition
 
