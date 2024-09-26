@@ -36,6 +36,7 @@ else:
         'http://samdolat.com',
         'http://www.samdolat.com',
         'samdolat.com',
+        'localhost'
     ]
     CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS
 
