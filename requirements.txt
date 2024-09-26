@@ -4,3 +4,5 @@ python-dotenv==1.0.1
 django-ckeditor-5==0.2.13
 gunicorn==23.0.0
 psycopg2-binary==2.9.9
+django-storages==1.14.4
+boto3==1.35.24
