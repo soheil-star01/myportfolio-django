@@ -1,3 +1,3 @@
-[![ci-cd](https://github.com/soheil-star01/myportfolio-django/actions/workflows/deploy_to_ec2.yml/badge.svg)](https://github.com/soheil-star01/myportfolio-django/actions/workflows/deploy_to_ec2.yml)
+[![Build and Push Docker Image to ECR](https://github.com/soheil-star01/myportfolio-django/actions/workflows/push_image.yml/badge.svg)](https://github.com/soheil-star01/myportfolio-django/actions/workflows/push_image.yml)
 
 In progress ....
