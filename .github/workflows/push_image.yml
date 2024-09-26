@@ -46,8 +46,16 @@ jobs:
           --service django-app6 \
           --task-definition django-app-ecs-task:latest \
           --force-new-deployment
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: eu-central-1
 
     - name: Stop Previous Task
       run: |
         old_task=$(aws ecs list-tasks --cluster django_app_c --service-name django-app6 --query 'taskArns[0]' --output text)
         aws ecs stop-task --cluster django_app_c --task $old_task
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: eu-central-1
