@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     "photo_gallery.apps.PhotoGalleryConfig",
     "blog.apps.BlogConfig",
     "my_app.apps.MyAppConfig",
-    'django_ckeditor_5'
+    'django_ckeditor_5',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -148,15 +149,28 @@ SESSION_COOKIE_SECURE = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'  # The URL to access static files
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # The directory where static files will be collected
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+if os.environ.get('RUNNING_MODE') == 'Local':
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+else:
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_S3_REGION_NAME = os.environ.get('AWS_REGION')
+    AWS_S3_CUSTOM_DOMAIN = 'django-portfolio-assets.s3.amazonaws.com'
+
+    AWS_S3_URL_PROTOCOL = 'https'
+    AWS_S3_USE_SSL = True
+    AWS_S3_VERIFY = True
+
+    MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/media/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
