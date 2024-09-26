@@ -159,8 +159,9 @@ if os.environ.get('RUNNING_MODE') == 'Local':
 else:
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = 'django-portfolio-assets'
     AWS_S3_REGION_NAME = os.environ.get('AWS_REGION')
-    AWS_S3_CUSTOM_DOMAIN = 'django-portfolio-assets.s3.amazonaws.com'
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
     AWS_S3_URL_PROTOCOL = 'https'
     AWS_S3_USE_SSL = True
