@@ -12,10 +12,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,13 +24,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 if os.environ.get('RUNNING_MODE') == 'Local':
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['http://samdolat.com', 'samdolat.com', 'https://samdolat.com']
-    CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']
+    ALLOWED_HOSTS = ['http://samdolat.com', 'samdolat.com', 'https://samdolat.com', 'localhost']
+    CSRF_TRUSTED_ORIGINS = [
+        'https://samdolat.com',
+        'https://www.samdolat.com',
+        'http://samdolat.com',
+        'http://www.samdolat.com',
+        'samdolat.com',
+        'localhost'
+    ]
+    CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS
 
 # Application definition
 
@@ -86,12 +90,26 @@ WSGI_APPLICATION = 'myportfolio.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.environ.get('RUNNING_MODE') == 'Local':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
+else:
+    # Postgres
+    DATABASES = {
+         'default': {
+             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+             'NAME': os.environ.get('DB_NAME'),
+             'USER': os.environ.get('DB_USER'),
+             'PASSWORD': os.environ.get('DB_PASSWORD'),
+             'HOST': os.environ.get('DB_URL'),
+             'PORT': '5432'
+         }
+    }
 
 
 # Password validation

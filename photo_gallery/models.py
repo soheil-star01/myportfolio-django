@@ -25,9 +25,9 @@ class Photo(models.Model):
     iso = models.IntegerField(default=200)
     aperture = models.FloatField()
     exposure_time = models.FloatField()
-    original_image = models.ImageField(upload_to="media/photo_gallery/%Y/%m/%d")
-    resized_image = models.ImageField(upload_to="media/photo_gallery/%Y/%m/%d", editable=False)
-    thumbnail_image = models.ImageField(upload_to="media/photo_gallery/%Y/%m/%d", editable=False)
+    original_image = models.ImageField(upload_to="photo_gallery/%Y/%m/%d")
+    resized_image = models.ImageField(upload_to="photo_gallery/%Y/%m/%d", editable=False)
+    thumbnail_image = models.ImageField(upload_to="photo_gallery/%Y/%m/%d", editable=False)
     tags = models.ManyToManyField(PhotoTag, related_name='photos', blank=True)
 
     def __str__(self):

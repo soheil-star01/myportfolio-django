@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block about_me %}
-    <p>Hello!</p>
+    <p>Greetings!</p>
     <p>I'm Soheil, which is the name of a star (you can read more about it on
         <a href="https://en.wikipedia.org/wiki/Lambda_Velorum">Wikipedia</a>),
         though I often go by Sam. I have about one to two years of experience in Data Science, and around five
@@ -15,7 +15,7 @@
 
     <h2>Latest blog post</h2>
     {% if last_blog_post %}
-        <img src="{{ last_blog_post.thumbnail_image }}" alt="Thumbnail image">
+        <a href="{% url 'blog_detail' last_blog_post.pk %}"><img src="{{ last_blog_post.thumbnail_image.url }}" alt="Thumbnail image"></a>
         <h3><a href="{% url 'blog_detail' last_blog_post.pk %}">{{ last_blog_post.title }}</a></h3>
         <small>{{ last_blog_post.date_posted }}</small>
         <p>{{ last_blog_post.summarized_content | slice:":400" }}...</p>
