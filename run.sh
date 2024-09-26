@@ -15,6 +15,8 @@ if aws s3 ls s3://django-portfolio-assets/ssl-certs/fullchain.pem > /dev/null 2>
   echo "SSL certificates found on S3. Downloading..."
   aws s3 cp s3://django-portfolio-assets/ssl-certs/fullchain.pem /etc/letsencrypt/live/samdolat.com/fullchain.pem
   aws s3 cp s3://django-portfolio-assets/ssl-certs/privkey.pem /etc/letsencrypt/live/samdolat.com/privkey.pem
+  chmod 600 /etc/letsencrypt/live/samdolat.com/privkey.pem
+  chmod 600 /etc/letsencrypt/live/samdolat.com/fullchain.pem
 else
   cp ./configs/nginx/nginx.http.conf /etc/nginx/conf.d/default.conf
   nginx -s reload
