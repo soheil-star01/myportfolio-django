@@ -31,6 +31,7 @@ fi
 
 cp ./configs/nginx/nginx.https.conf /etc/nginx/conf.d/default.conf
 
+nginx -t
 nginx -s reload
 
 gunicorn -c ./configs/gunicorn/gunicorn.conf.py
