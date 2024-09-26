@@ -6,3 +6,5 @@ db.sqlite3
 media/*/*
 static
 logs
+/.prod.env
+/.local.env

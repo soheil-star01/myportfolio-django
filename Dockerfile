@@ -1,13 +1,21 @@
 FROM python:3.12
 
-RUN apt update && apt install -y nginx certbot python3-certbot-nginx
+RUN apt-get update && \
+    apt-get install -y \
+    curl \
+    unzip \
+    nginx \
+    certbot \
+    python3-certbot-nginx && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install
 
 RUN mkdir /django_app && cd /django_app
 
 WORKDIR /django_app
 
 COPY ./configs/nginx/nginx.http.conf /etc/nginx/nginx.conf
-COPY ./configs/nginx/nginx.https.conf /etc/nginx/nginx.https.conf
 COPY ./configs/nginx/certbot /var/www/certbot
 COPY ./configs/nginx/ssl /etc/letsencrypt
 
