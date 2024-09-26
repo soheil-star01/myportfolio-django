@@ -1,0 +1,72 @@
+{
+    "family": "django-app-ecs-task",
+    "containerDefinitions": [
+        {
+            "name": "django_app",
+            "image": "536331667549.dkr.ecr.eu-central-1.amazonaws.com/django_app:latest",
+            "cpu": 0,
+            "memory": 461,
+            "portMappings": [
+                {
+                    "name": "django_app-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                },
+                {
+                    "name": "django_app-443-tcp",
+                    "containerPort": 443,
+                    "hostPort": 443,
+                    "protocol": "tcp",
+                    "appProtocol": "http2"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [
+                {
+                    "value": "arn:aws:s3:::django-portfolio-assets/creds/.env",
+                    "type": "s3"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/django-app-ecs-task",
+                    "mode": "non-blocking",
+                    "awslogs-create-group": "true",
+                    "max-buffer-size": "25m",
+                    "awslogs-region": "eu-central-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "curl -sf http://localhost/ || exit 1"
+                ],
+                "interval": 30,
+                "timeout": 5,
+                "retries": 3
+            },
+            "systemControls": []
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::536331667549:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::536331667549:role/ecsTaskExecutionRole",
+    "networkMode": "bridge",
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "1024",
+    "memory": "461",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}

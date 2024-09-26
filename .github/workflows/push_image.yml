@@ -30,6 +30,20 @@ jobs:
     - name: Push the Docker image to ECR
       run: docker push 536331667549.dkr.ecr.eu-central-1.amazonaws.com/django_app:latest
 
-#    - name: Deploy to ECS
-#      run: |
-#        aws ecs update-service --cluster django_app_c --service django-app6 --force-new-deployment
+    - name: Register Task Definition
+      run: |
+        aws ecs register-task-definition --cli-input-json file://./configs/infra/ecs-task-definition.json
+        
+
+    - name: Update ECS Service
+      run: |
+        aws ecs update-service \
+          --cluster django_app_c \
+          --service django-app6 \
+          --task-definition django-app-ecs-task:latest \
+          --force-new-deployment
+
+    - name: Stop Previous Task
+      run: |
+        old_task=$(aws ecs list-tasks --cluster django_app_c --service-name django-app6 --query 'taskArns[0]' --output text)
+        aws ecs stop-task --cluster django_app_c --task $old_task
