@@ -4,7 +4,6 @@ python manage.py migrate
 python manage.py createsuperuser --noinput
 python manage.py collectstatic --noinput
 
-unlink /etc/nginx/sites-enabled/default
 nginx -g 'daemon off;' &
 
 sleep 5
@@ -18,7 +17,7 @@ if aws s3 ls s3://django-portfolio-assets/ssl-certs/fullchain.pem > /dev/null 2>
   chmod 600 /etc/letsencrypt/live/samdolat.com/privkey.pem
   chmod 600 /etc/letsencrypt/live/samdolat.com/fullchain.pem
 else
-  cp ./configs/nginx/nginx.http.conf /etc/nginx/conf.d/default.conf
+  cp ./configs/nginx/nginx.http.conf /etc/nginx/nginx.conf
   nginx -s reload
 
   echo "SSL certificates not found. Generating new ones with Certbot..."
@@ -29,7 +28,7 @@ else
   aws s3 cp /etc/letsencrypt/live/samdolat.com/privkey.pem s3://django-portfolio-assets/ssl-certs/
 fi
 
-cp ./configs/nginx/nginx.https.conf /etc/nginx/conf.d/default.conf
+cp ./configs/nginx/nginx.https.conf /etc/nginx/nginx.conf
 
 nginx -t
 nginx -s reload
