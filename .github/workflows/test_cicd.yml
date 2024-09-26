@@ -19,6 +19,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: eu-central-1
 
     - name: Build the Docker image
       run: docker build -t django_app .
@@ -32,6 +33,3 @@ jobs:
     - name: Deploy to ECS
       run: |
         aws ecs update-service --cluster django_app_c --service django-app6 --force-new-deployment
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
