@@ -32,7 +32,7 @@ jobs:
 
     - name: Register Task Definition
       run: |
-        aws ecs register-task-definition --cli-input-json file://./configs/infra/ecs-task-definition.json --debug
+        aws ecs register-task-definition --cli-input-json file://./configs/infra/ecs-task-definition.json --region eu-central-1
         
 
     - name: Update ECS Service
