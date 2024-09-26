@@ -34,8 +34,10 @@ else:
         'https://samdolat.com',
         'https://www.samdolat.com',
         'http://samdolat.com',
-        'http://www.samdolat.com'
+        'http://www.samdolat.com',
+        'samdolat.com',
     ]
+    CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS
 
 # Application definition
 
