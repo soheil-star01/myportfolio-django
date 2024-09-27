@@ -150,7 +150,7 @@ SESSION_COOKIE_SECURE = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
+STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
 # if os.environ.get('RUNNING_MODE') == 'Local':
 #     MEDIA_URL = '/media/'
 #     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -177,7 +177,6 @@ STORAGES = {
 
     "staticfiles": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
-        "LOCATION": os.path.join(BASE_DIR, 'static'),
     },
 }
 
