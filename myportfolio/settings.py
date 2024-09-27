@@ -28,15 +28,8 @@ DEBUG = False
 if os.environ.get('RUNNING_MODE') == 'Local':
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['http://samdolat.com', 'samdolat.com', 'https://samdolat.com', 'localhost']
-    CSRF_TRUSTED_ORIGINS = [
-        'https://samdolat.com',
-        'https://www.samdolat.com',
-        'http://samdolat.com',
-        'http://www.samdolat.com',
-        'samdolat.com',
-        'localhost'
-    ]
+    ALLOWED_HOSTS = ['https://samdolat.com', 'https://www.samdolat.com']
+    CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']
 
 # Application definition
 
@@ -144,40 +137,40 @@ USE_TZ = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-# if os.environ.get('RUNNING_MODE') == 'Local':
-#     MEDIA_URL = '/media/'
-#     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-#
-# else:
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = 'django-portfolio-assets'
-AWS_S3_REGION_NAME = os.environ.get('AWS_REGION')
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_S3_USE_SSL = True
-AWS_S3_VERIFY = True
-AWS_DEFAULT_ACL = None
+if os.environ.get('RUNNING_MODE') == 'Local':
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+else:
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = 'django-portfolio-assets'
+    AWS_S3_REGION_NAME = os.environ.get('AWS_REGION')
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_USE_SSL = True
+    AWS_S3_VERIFY = True
+    AWS_DEFAULT_ACL = None
 
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "OPTIONS": {
-            "location": "media",
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "location": "media",
+            },
         },
-    },
 
-    "staticfiles": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "OPTIONS": {
-            "location": "static",
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "location": "static",
+            },
         },
-    },
-}
-
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CKEDITOR_UPLOAD_PATH = "uploads/"
