@@ -162,22 +162,27 @@ AWS_S3_USE_SSL = True
 AWS_S3_VERIFY = True
 AWS_DEFAULT_ACL = None
 
-# Static and Media URLs
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# # Static and Media URLs
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
-# Storage configuration
 STORAGES = {
-    # Media files should go to the "media" folder in S3
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "LOCATION": "media/",  # Ensure media files go to the "media" folder
+        "OPTIONS": {
+            "location": "/media",
+            "base_url": "/media/",
+        },
+
     },
 
-    # Static files should go to the "static" folder in S3
     "staticfiles": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "LOCATION": "static/",  # Ensure static files go to the "static" folder
+        "OPTIONS": {
+            "location": "/static",
+            "base_url": "/static/",
+        },
+
     },
 }
 
