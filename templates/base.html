@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,9 @@
     <title>Sam's Personal Website</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/default.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'my_app/css/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'photo_gallery/css/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/css/styles.css' %}">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
 </head>
@@ -21,5 +25,6 @@
 {% block about_me %}{% endblock about_me %}
 {% block page_title %}{% endblock page_title %}
 {% block page_content %}{% endblock page_content %}
+<p></p>
 </body>
 </html>

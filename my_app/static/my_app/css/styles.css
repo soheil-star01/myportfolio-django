@@ -1,0 +1,131 @@
+.paragraph {
+    line-height: 1.8;
+}
+
+.paragraph-image {
+    text-align: center;
+}
+
+.paragraph-image img {
+    margin: 10px;
+    opacity: 1;
+}
+
+p {
+    text-align: match-parent;
+    font-size: 1.1em;
+    line-height: 1.8;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.obfuscated-email {
+    font-weight: bold;
+    color: #438445;
+    word-break: break-all;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin-top: 40px;
+    width: 100%;
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    transition: transform 0.3s, opacity 0.3s, filter 0.3s;
+}
+
+.social-icon:hover {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+/* Container for the latest blog post and photo in the same row */
+.latest-posts-row {
+    display: flex;  /* Use flexbox to align blog post and photo side by side */
+    gap: 20px;  /* Space between the blog post and the photo */
+    justify-content: space-between;  /* Spread out the items */
+    max-width: 1200px;  /* Limit the total width */
+    margin: 0 auto;  /* Center the container */
+    padding: 20px;
+    align-items: flex-start;  /* Align items independently based on their content */
+}
+
+/* Flex item for the blog post */
+.latest-blog-post {
+    background-color: #ffffff;  /* White background */
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
+    border-radius: 8px;
+    width: 60%;  /* Takes 60% of the row */
+    overflow: hidden;
+}
+
+/* Flex item for the photo */
+.latest-photo {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 35%;  /* Takes 35% of the row */
+    text-align: center;
+    overflow: hidden;
+    height: auto;  /* Allow the height to adjust based on content */
+}
+
+/* Styling for the latest post image */
+.latest-post-image, .latest-photo-image {
+    width: 100%;
+    height: auto;
+    border: 5px solid black;  /* Thick black border */
+    border-radius: 5px;
+    margin-bottom: 15px;
+    transition: transform 0.3s;
+    opacity: 1;
+}
+
+/* Slight hover effect on the post and photo images */
+.latest-post-image:hover, .latest-photo-image:hover {
+    transform: scale(1.05);  /* Slight zoom on hover */
+}
+
+/* Styling for the latest post title */
+.latest-blog-post h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #007BFF;  /* Highlight the title */
+    text-align: center;
+}
+
+/* Date styling */
+.latest-post-date {
+    display: block;
+    color: #888;
+    font-size: 0.9em;
+    text-align: center;  /* Center the date */
+    margin-bottom: 15px;
+}
+
+/* Content summary */
+.latest-blog-post p {
+    font-size: 1em;
+    line-height: 1.5;
+    text-align: justify;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+    .latest-posts-row {
+        flex-direction: column;  /* Stack the blog post and photo vertically on small screens */
+    }
+
+    .latest-blog-post, .latest-photo {
+        width: 100%;  /* Full width on smaller screens */
+    }
+}

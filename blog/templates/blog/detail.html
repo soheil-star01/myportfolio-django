@@ -5,7 +5,9 @@
 {% endblock page_title %}
 
 {% block page_content %}
-    <img src={{ post.resized_image.url }}>
-    <small>{{ post.created_on.date }}</small>
-    <p>{{ post.content | safe }}</p>
+    <div class="post-container">
+        <img src="{{ post.resized_image.url }}" alt="{{ post.title }}" class="post-image">
+        <small class="post-date">{{ post.created_on.date }}</small>
+        <p class="post-content">{{ post.content | safe }}</p>
+    </div>
 {% endblock page_content %}

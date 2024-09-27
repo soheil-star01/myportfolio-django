@@ -1,38 +1,25 @@
 {% extends "base.html" %}
-
+{% load static %}
 
 {% block page_title %}
     <h2>Photo Gallery</h2>
 {% endblock page_title %}
 
 {% block page_content %}
-    <style>
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="{% static 'my_app/css/gallery.css' %}">
 
-        .photo-item {
-            width: 100%;
-        }
-
-        .photo-item img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-    </style>
     {% if tag_name %}
         <p>Filtered by tag: {{ tag_name }}</p>
     {% endif %}
+
     {% block photos %}
         {% if photos %}
             <div class="photo-grid">
                 {% for photo in photos %}
                     <div class="photo-item">
                         <a href="{% url 'photo_gallery_detail' photo.pk %}">
-                            <img src={{ photo.thumbnail_image.url }}>
+                            <img src="{{ photo.thumbnail_image.url }}" alt="Photo Thumbnail">
                         </a>
                     </div>
                 {% endfor %}

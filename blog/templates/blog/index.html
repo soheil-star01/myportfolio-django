@@ -1,17 +1,28 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block page_title %}
     <h2>Blog Posts</h2>
 {% endblock page_title %}
 
 {% block page_content %}
+    <!-- Link to the external CSS file for blog styling -->
+    <link rel="stylesheet" href="{% static 'my_app/css/blog.css' %}">
+
     {% block posts %}
         {% if posts %}
-            {% for post in posts %}
-                <img src="{{ post.thumbnail_image.url }}" alt="Thumbnail image">
-                <h3><a href="{% url 'blog_detail' post.pk %}">{{ post.title }}</a></h3>
-                <small>{{ post.date_posted }}</small>
-                <p>{{ post.summarized_content | slice:":400" }}...</p>
-            {% endfor %}
+            <div class="blog-grid">
+                {% for post in posts %}
+                    <a href="{% url 'blog_detail' post.pk %}" class="blog-post-link">
+                        <div class="blog-post">
+                            <img src="{{ post.thumbnail_image.url }}" alt="Thumbnail image">
+                            <h3>{{ post.title }}</h3>
+                            <small>{{ post.date_posted }}</small>
+                            <p>{{ post.summarized_content | slice:":150" }}...</p>  <!-- Truncated content for smaller space -->
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
         {% else %}
             <p>No blog posts available at the moment.</p>
         {% endif %}

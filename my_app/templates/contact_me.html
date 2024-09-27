@@ -1,15 +1,24 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block page_title %}
     <h2>Contact ME!</h2>
 {% endblock page_title %}
 
 {% block page_content %}
-
-    <p>You can find me through these ways:</p>
-    <p>Email:</p>
-    <p>LinkedIn</p>
-    <p>UpWork:</p>
-    <p>GitHub:</p>
-
+    <div class="post-container">
+        <p>You can reach me through the following channels:</p>
+        <p>Email: <span class="obfuscated-email">sam.dolatabadi91 [at $ign] gmail [dOt] com</span></p>
+        <div class="social-links">
+            <a href="https://www.linkedin.com/in/soheil-dolatabadi91/" target="_blank">
+                <img src="{% static 'img/linkedin_logo.png' %}" alt="LinkedIn" class="social-icon">
+            </a>
+            <a href="https://github.com/soheil-star01" target="_blank">
+                <img src="{% static 'img/github_logo.png' %}" alt="GitHub" class="social-icon">
+            </a>
+            <a href="https://www.upwork.com/freelancers/~013e1a6daf843f5322" target="_blank">
+                <img src="{% static 'img/upwork_logo.png' %}" alt="Upwork" class="social-icon">
+            </a>
+        </div>
+    </div>
 {% endblock page_content %}
