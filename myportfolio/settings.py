@@ -144,10 +144,6 @@ USE_TZ = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-
 # if os.environ.get('RUNNING_MODE') == 'Local':
 #     MEDIA_URL = '/media/'
 #     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -162,31 +158,25 @@ AWS_S3_USE_SSL = True
 AWS_S3_VERIFY = True
 AWS_DEFAULT_ACL = None
 
-# # Static and Media URLs
-# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
-            "location": "/media",
-            "base_url": "/media/",
+            "location": "media",
         },
-
     },
 
     "staticfiles": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
-            "location": "/static",
-            "base_url": "/static/",
+            "location": "static",
         },
-
     },
 }
 
-# Explicitly define STATICFILES_STORAGE to ensure Django uses it
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
