@@ -21,13 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
+# os.environ['RUNNING_MODE'] = 'Local'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 if os.environ.get('RUNNING_MODE') == 'Local':
+    DEBUG = True
     ALLOWED_HOSTS = ['*']
 else:
+    DEBUG = False
     ALLOWED_HOSTS = ['www.samdolat.com', 'samdolat.com', 'localhost']
     CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']
 
@@ -136,6 +139,12 @@ USE_TZ = True
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'my_app/static'),
+    os.path.join(BASE_DIR, 'photo_gallery/static'),
+    os.path.join(BASE_DIR, 'blog/static'),
+]
 
 if os.environ.get('RUNNING_MODE') == 'Local':
     MEDIA_URL = '/media/'

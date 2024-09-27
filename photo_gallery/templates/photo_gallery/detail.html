@@ -5,15 +5,29 @@
 {% endblock page_title %}
 
 {% block page_content %}
-    <img src={{ photo.resized_image.url }}>
-    <small>{{ photo.datetime_posted.date }}</small>
-    <small>Tags: {% for tag in tags %} <a href="{% url 'photo_gallery_filter_by_tags' tag.pk %}">{{ tag.tag_name }} </a> , {% endfor %}</small>
-    <p>{{ photo.description | linebreaks }}</p>
-    <p>Camera: {{ photo.camera_model }}</p>
-    <p>Lens: {{ photo.lens_model }}</p>
-    <p>Focal length: {{ photo.focal_length }}</p>
-    <p>Iso: {{ photo.iso }}</p>
-    <p>F/{{ photo.aperture }}</p>
-    <p>Exposure time: {{ photo.exposure_time }}</p>
+    <div class="photo-container">
+        <img src="{{ photo.resized_image.url }}" alt="Photo by {{ photo.camera_model }}" class="photo-image">
 
+        <div class="photo-info">
+            <small class="photo-date">{{ photo.datetime_posted.date }}</small>
+            <small class="photo-tags">
+                Tags:
+                {% for tag in tags %}
+                    <a href="{% url 'photo_gallery_filter_by_tags' tag.pk %}" class="photo-tag">{{ tag.tag_name }}</a>
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </small>
+        </div>
+
+        <p class="photo-description">{{ photo.description | linebreaks }}</p>
+
+        <div class="photo-details">
+            <span>Camera: {{ photo.camera_model }}</span>
+            <span>Lens: {{ photo.lens_model }}</span>
+            <span>Focal Length: {{ photo.focal_length }} mm</span>
+            <span>ISO: {{ photo.iso }}</span>
+            <span>Aperture: f/{{ photo.aperture }}</span>
+            <span>Exposure Time: {{ photo.exposure_time }} sec</span>
+        </div>
+    </div>
 {% endblock page_content %}

@@ -1,35 +1,43 @@
 {% extends "base.html" %}
 {% block about_me %}
-    <p>Greetings!</p>
-    <p>I'm Soheil, which is the name of a star (you can read more about it on
-        <a href="https://en.wikipedia.org/wiki/Lambda_Velorum">Wikipedia</a>),
-        though I often go by Sam. I have about one to two years of experience in Data Science, and around five
-        years of experience in Python and Backend development. (Learn more about me and my tech stack
-        <a href="{% url 'about_me' %}">here</a>!)</p>
-    <p>In my free time, I enjoy photography, especially landscapes.
-        Feel free to explore my latest photos in my humble <a href="{% url 'photo_gallery_index' %}">Photo Gallery</a>.</p>
-    <p>This website is powered by Django! (<a href="https://github.com/soheil-star01/myportfolio-django">Source code</a>)</p>
+    <div class="post-container">
+        <p>Greetings!</p>
+        <p class="paragraph">I'm Soheil, which is the name of a star (you can read more about it on
+            <a href="https://en.wikipedia.org/wiki/Lambda_Velorum">Wikipedia</a>),
+            though I often go by Sam. I have about one to two years of experience in Data Science, and around five
+            years of experience in Python and Backend development. (Learn more about me and my tech stack
+            <a href="{% url 'about_me' %}">here</a>!)</p>
+        <p class="paragraph">In my free time, I enjoy photography, especially landscapes.
+            Feel free to explore my latest photos in my humble <a href="{% url 'photo_gallery_index' %}">Photo Gallery</a>.</p>
+        <p class="paragraph">This website is powered by Django! (<a href="https://github.com/soheil-star01/myportfolio-django">Source code</a>)</p>
+    </div>
 {% endblock about_me %}
 
 {% block page_content %}
+    <h2>Latest blog post and photo</h2>
+    <div class="latest-posts-row">
+        <!-- Latest Blog Post -->
+        <div class="latest-blog-post">
+            {% if last_blog_post %}
+                <a href="{% url 'blog_detail' last_blog_post.pk %}" class="latest-blog-post-link">
+                    <img src="{{ last_blog_post.thumbnail_image.url }}" alt="Thumbnail image" class="latest-post-image">
+                    <h3>{{ last_blog_post.title }}</h3>
+                </a>
+            {% else %}
+                <p>No blog posts available at the moment.</p>
+            {% endif %}
+        </div>
 
-    <h2>Latest blog post</h2>
-    {% if last_blog_post %}
-        <a href="{% url 'blog_detail' last_blog_post.pk %}"><img src="{{ last_blog_post.thumbnail_image.url }}" alt="Thumbnail image"></a>
-        <h3><a href="{% url 'blog_detail' last_blog_post.pk %}">{{ last_blog_post.title }}</a></h3>
-        <small>{{ last_blog_post.date_posted }}</small>
-        <p>{{ last_blog_post.summarized_content | slice:":400" }}...</p>
-    {% else %}
-        <p>No blog posts available at the moment.</p>
-    {% endif %}
-
-    <h2>Latest photo</h2>
-    {% if last_photo_gallery %}
-        <a href="{% url 'photo_gallery_detail' last_photo_gallery.pk %}">
-            <img src="{{ last_photo_gallery.thumbnail_image.url }}" alt="Gallery thumbnail">
-        </a>
-    {% else %}
-        <p>No photos available at the moment.</p>
-    {% endif %}
+        <!-- Latest Photo -->
+        <div class="latest-photo">
+            {% if last_photo_gallery %}
+                <a href="{% url 'photo_gallery_detail' last_photo_gallery.pk %}">
+                    <img src="{{ last_photo_gallery.thumbnail_image.url }}" alt="Gallery thumbnail" class="latest-photo-image">
+                </a>
+            {% else %}
+                <p>No photos available at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
 
 {% endblock page_content %}

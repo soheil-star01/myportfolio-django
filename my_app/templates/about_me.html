@@ -1,15 +1,34 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block page_title %}
     <h2>About ME!</h2>
 {% endblock page_title %}
 
 {% block page_content %}
+    <div class="post-container">
+        <p>
+            I hold both a Bachelor's and a Master's degree in Electrical Engineering, specializing in meta-heuristic optimization techniques such as Genetic Algorithms and Particle Swarm Optimization. I’ve contributed to the field with one book chapter and several research papers published in scientific journals. You can explore my work on
+            <a href="https://scholar.google.com/citations?user=4Y90en0AAAAJ&hl=en">Google Scholar</a> or
+            <a href="https://www.researchgate.net/profile/Soheil-Dolatabadi">ResearchGate</a>. During my studies, I primarily worked with Matlab and Matlab/Simulink for programming.
+            After graduating, I spent two years as an embedded engineer, developing industrial devices using microcontrollers (ARM and AVR) and coding them in C++.
+        </p>
 
-    <p>You can find me through these ways:</p>
-    <p>Email:</p>
-    <p>LinkedIn</p>
-    <p>UpWork:</p>
-    <p>GitHub:</p>
+        <div class="paragraph-image">
+            <img src="{% static 'img/elec1.png' %}" alt="Device 1" width="300">
+            <img src="{% static 'img/elec2.png' %}" alt="Device 2" width="300">
+        </div>
 
+        <p>
+            In 2018, I transitioned to programming full-time and started my journey in Python as a junior back-end developer and data scientist. I built and deployed machine learning models as APIs for the web. Today, I specialize in Python back-end development with a bit of DevOps to enhance the efficiency of my projects.
+        </p>
+
+        <p>
+            I also work as a Python freelancer on Upwork (<a href="https://www.upwork.com/freelancers/~013e1a6daf843f5322">see my profile</a>), where I’ve earned the expert-vetted badge, placing me in the top 1% of freelancers due to my clients' high satisfaction.
+        </p>
+
+        <div class="paragraph-image">
+            <img src="{% static 'img/upwork_screenshot.png' %}" alt="Upwork Profile Screenshot">
+        </div>
+    </div>
 {% endblock page_content %}
