@@ -28,7 +28,7 @@ DEBUG = False
 if os.environ.get('RUNNING_MODE') == 'Local':
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['https://samdolat.com', 'https://www.samdolat.com']
+    ALLOWED_HOSTS = ['https://samdolat.com', 'https://www.samdolat.com', 'localhost']
     CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']
 
 # Application definition
