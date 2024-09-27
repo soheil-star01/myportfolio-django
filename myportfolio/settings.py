@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 if os.environ.get('RUNNING_MODE') == 'Local':
     ALLOWED_HOSTS = ['*']
@@ -158,35 +158,32 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'django-portfolio-assets'
 AWS_S3_REGION_NAME = os.environ.get('AWS_REGION')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-
 AWS_S3_USE_SSL = True
 AWS_S3_VERIFY = True
 AWS_DEFAULT_ACL = None
 
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# Static and Media URLs
 STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
+# Storage configuration
 STORAGES = {
-    # Media files should go to S3 in the "media" folder
+    # Media files should go to the "media" folder in S3
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "OPTIONS": {
-            "bucket_name": AWS_STORAGE_BUCKET_NAME,
-        },
-        "LOCATION": "media",
+        "LOCATION": "media",  # Ensure media files go to the "media" folder
     },
 
+    # Static files should go to the "static" folder in S3
     "staticfiles": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "OPTIONS": {
-            "bucket_name": AWS_STORAGE_BUCKET_NAME,
-        },
-        "LOCATION": "static",
+        "LOCATION": "static",  # Ensure static files go to the "static" folder
     },
 }
 
+# Explicitly define STATICFILES_STORAGE to ensure Django uses it
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
 CKEDITOR_UPLOAD_PATH = "uploads/"
+
