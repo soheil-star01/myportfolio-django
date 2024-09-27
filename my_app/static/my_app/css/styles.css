@@ -129,3 +129,19 @@ p {
         width: 100%;  /* Full width on smaller screens */
     }
 }
+
+.home-bar {
+    display: flex;
+    gap: 10px;
+    justify-content: center; /* Optional: Center items horizontally */
+}
+
+.home-bar a, .home-bar a:visited {
+    text-decoration: none;
+    color: #c6c6c6; /* Define link colors */
+    padding: 5px 10px;
+}
+
+.home-bar a:hover {
+    background-color: #525252; /* Add hover effect */
+}
