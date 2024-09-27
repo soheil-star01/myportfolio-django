@@ -37,7 +37,6 @@ else:
         'samdolat.com',
         'localhost'
     ]
-    CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS
 
 # Application definition
 
@@ -148,9 +147,7 @@ SESSION_COOKIE_SECURE = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
 # if os.environ.get('RUNNING_MODE') == 'Local':
 #     MEDIA_URL = '/media/'
 #     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -162,21 +159,30 @@ AWS_STORAGE_BUCKET_NAME = 'django-portfolio-assets'
 AWS_S3_REGION_NAME = os.environ.get('AWS_REGION')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
-AWS_S3_URL_PROTOCOL = 'https'
 AWS_S3_USE_SSL = True
 AWS_S3_VERIFY = True
 AWS_DEFAULT_ACL = None
 
-MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/media/'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STORAGES = {
+    # Media files should go to S3 in the "media" folder
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+        },
+        "LOCATION": "media",
     },
 
     "staticfiles": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+        },
+        "LOCATION": "static",
     },
 }
 
