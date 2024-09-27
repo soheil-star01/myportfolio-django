@@ -171,13 +171,13 @@ STORAGES = {
     # Media files should go to the "media" folder in S3
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "LOCATION": "media",  # Ensure media files go to the "media" folder
+        "LOCATION": "media/",  # Ensure media files go to the "media" folder
     },
 
     # Static files should go to the "static" folder in S3
     "staticfiles": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "LOCATION": "static",  # Ensure static files go to the "static" folder
+        "LOCATION": "static/",  # Ensure static files go to the "static" folder
     },
 }
 
