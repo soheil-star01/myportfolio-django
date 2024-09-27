@@ -72,6 +72,10 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);  /* Subtle shadow for depth */
 }
 
+.post-container a, .post-container a:visited {
+    color: #ff4e00;
+}
+
 /* Styling for the post image */
 .post-image {
     width: 100%;
