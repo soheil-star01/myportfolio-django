@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     "blog.apps.BlogConfig",
     "my_app.apps.MyAppConfig",
     'django_ckeditor_5',
-    'ckeditor_uploader',
     'storages'
 ]
 
@@ -206,7 +205,7 @@ customColorPalette = [
     },
 ]
 
-# CKEDITOR_5_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"  # optional
+CKEDITOR_5_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': [
