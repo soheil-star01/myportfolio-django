@@ -205,7 +205,7 @@ customColorPalette = [
     },
 ]
 
-CKEDITOR_5_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+CKEDITOR_5_FILE_STORAGE = "myportfolio.storage.CkeditorStorage"
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': [
