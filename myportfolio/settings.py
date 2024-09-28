@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
-# os.environ['RUNNING_MODE'] = 'Local'
+# os.environ['RUNNING_MODE'] = 'Local'  # TODO
 
 # SECURITY WARNING: don't run with debug turned on in production!
 

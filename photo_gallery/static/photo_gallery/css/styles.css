@@ -2,7 +2,7 @@
     border: 1px solid #e0e0e0;
     padding: 2px;
     margin: 20px 0;
-    max-width: 800px;
+    max-width: 750px;
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -10,14 +10,15 @@
 }
 
 .photo-image {
-    width: 100%;
+    width: 700px;
     height: auto;
-    margin-bottom: 15px;
+    margin: 0 auto 15px; /* Centers the image horizontally */
+    display: block; /* Ensures image is treated as a block-level element */
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
     opacity: 1;
-    border: 30px solid black; /* Thick black border */
+    border: 30px solid black;
 }
 
 .photo-info {
