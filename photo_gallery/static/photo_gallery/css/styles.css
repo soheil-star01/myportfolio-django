@@ -12,13 +12,13 @@
 .photo-image {
     width: 700px;
     height: auto;
-    margin: 0 auto 15px; /* Centers the image horizontally */
+    margin: 15px 15px; /* Centers the image horizontally */
     display: block; /* Ensures image is treated as a block-level element */
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
     opacity: 1;
-    border: 30px solid black;
+    border: 10px solid black;
 }
 
 .photo-info {

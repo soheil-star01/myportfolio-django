@@ -73,10 +73,16 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);  /* Subtle shadow for depth */
 }
 
-.post-container img {
-    max-width: 700px;
-    width: 100%; /* Ensures the image scales down proportionally */
-    height: auto; /* Maintains the aspect ratio */
+.post-container figure {
+    display: flex;
+    justify-content: center; /* Centers the figure's content */
+    margin: 0 auto;
+}
+
+.post-container figure img {
+    max-width: 700px;  /* Limit the image width */
+    width: 100%;       /* Ensure the image scales down proportionally */
+    height: auto;      /* Maintain aspect ratio */
 }
 
 .post-container a, .post-container a:visited {
