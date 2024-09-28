@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block about_me %}
+{% block page_content %}
     <div class="post-container">
         <p>Greetings!</p>
         <p class="paragraph">I'm Soheil, which is the name of a star (you can read more about it on
@@ -10,34 +10,34 @@
         <p class="paragraph">In my free time, I enjoy photography, especially landscapes.
             Feel free to explore my latest photos in my humble <a href="{% url 'photo_gallery_index' %}">Photo Gallery</a>.</p>
         <p class="paragraph">This website is powered by Django! (<a href="https://github.com/soheil-star01/myportfolio-django">Source code</a>)</p>
-    </div>
-{% endblock about_me %}
+        <br>
+        <br>
+        <h2>Latest blog post and photo</h2>
+        <div class="latest-posts-row">
+            <!-- Latest Blog Post -->
+            <div class="latest-blog-post">
+                {% if last_blog_post %}
+                    <a href="{% url 'blog_detail' last_blog_post.pk %}" class="latest-blog-post-link">
+                        <img src="{{ last_blog_post.thumbnail_image.url }}" alt="Thumbnail image" class="latest-post-image">
+                        <h3>{{ last_blog_post.title }}</h3>
+                    </a>
+                {% else %}
+                    <p>No blog posts available at the moment.</p>
+                {% endif %}
+            </div>
 
-{% block page_content %}
-    <h2>Latest blog post and photo</h2>
-    <div class="latest-posts-row">
-        <!-- Latest Blog Post -->
-        <div class="latest-blog-post">
-            {% if last_blog_post %}
-                <a href="{% url 'blog_detail' last_blog_post.pk %}" class="latest-blog-post-link">
-                    <img src="{{ last_blog_post.thumbnail_image.url }}" alt="Thumbnail image" class="latest-post-image">
-                    <h3>{{ last_blog_post.title }}</h3>
-                </a>
-            {% else %}
-                <p>No blog posts available at the moment.</p>
-            {% endif %}
-        </div>
-
-        <!-- Latest Photo -->
-        <div class="latest-photo">
-            {% if last_photo_gallery %}
-                <a href="{% url 'photo_gallery_detail' last_photo_gallery.pk %}">
-                    <img src="{{ last_photo_gallery.thumbnail_image.url }}" alt="Gallery thumbnail" class="latest-photo-image">
-                </a>
-            {% else %}
-                <p>No photos available at the moment.</p>
-            {% endif %}
+            <!-- Latest Photo -->
+            <div class="latest-photo">
+                {% if last_photo_gallery %}
+                    <a href="{% url 'photo_gallery_detail' last_photo_gallery.pk %}">
+                        <img src="{{ last_photo_gallery.thumbnail_image.url }}" alt="Gallery thumbnail" class="latest-photo-image">
+                    </a>
+                {% else %}
+                    <p>No photos available at the moment.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
+
 
 {% endblock page_content %}

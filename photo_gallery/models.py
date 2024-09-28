@@ -15,9 +15,9 @@ class PhotoTag(models.Model):
 
 
 class Photo(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    location = models.CharField(max_length=50)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    location = models.CharField(max_length=50, null=True, blank=True)
     datetime_posted = models.DateTimeField("date published")
     camera_model = models.CharField(max_length=50)
     lens_model = models.CharField(max_length=50)

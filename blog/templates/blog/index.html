@@ -18,7 +18,6 @@
                             <img src="{{ post.thumbnail_image.url }}" alt="Thumbnail image">
                             <h3>{{ post.title }}</h3>
                             <small>{{ post.date_posted }}</small>
-                            <p>{{ post.summarized_content | slice:":150" }}...</p>  <!-- Truncated content for smaller space -->
                         </div>
                     </a>
                 {% endfor %}

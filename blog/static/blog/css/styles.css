@@ -1,3 +1,4 @@
+
 /* Grid container for blog posts */
 .blog-grid {
     display: grid;
@@ -74,6 +75,10 @@
 
 .post-container a, .post-container a:visited {
     color: #ff4e00;
+}
+
+.post-container h2 {
+    color: #000000;
 }
 
 /* Styling for the post image */

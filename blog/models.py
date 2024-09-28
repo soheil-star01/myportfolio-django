@@ -16,7 +16,6 @@ class BlogPost(models.Model):
     content = CKEditor5Field(null=True)
     author = models.CharField(max_length=200)
     date_posted = models.DateTimeField("date published")
-    summarized_content = models.TextField()
     original_image = models.ImageField(upload_to="blog/%Y/%m/%d")
     resized_image = models.ImageField(upload_to="blog/%Y/%m/%d", editable=False)
     thumbnail_image = models.ImageField(upload_to="blog/%Y/%m/%d", editable=False)

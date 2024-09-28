@@ -1,9 +1,39 @@
+
+body {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    /*height: 100vh;*/
+    background-color: #525252;
+    margin: 0;
+}
+
+html, body {
+    width: 100%;
+    /*height: 100%;*/
+    margin: 0;
+}
+.page-container {
+    width: 80%;
+    max-width: 900px;
+    background-color: #707070;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+h1{
+    color: #e0e0e0;
+}
+h2{
+    color: #e0e0e0;
+}
 .paragraph {
     line-height: 1.8;
 }
 
 .paragraph-image {
     text-align: center;
+    margin: 10px;
 }
 
 .paragraph-image img {
@@ -144,4 +174,10 @@ p {
 
 .home-bar a:hover {
     background-color: #525252; /* Add hover effect */
+}
+.post-container h2 {
+    font-size: 2em;
+    margin: 0 0 10px;
+    color: #000000;  /* Make the title stand out */
+
 }

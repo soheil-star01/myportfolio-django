@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-
-{% block page_title %}
-    <h2>{{ post.title }}</h2>
-{% endblock page_title %}
+{% load static %}
 
 {% block page_content %}
+    <link rel="stylesheet" href="{% static 'blog/css/styles.css' %}">
+
     <div class="post-container">
+        <h2>{{ post.title }}</h2>
         <img src="{{ post.resized_image.url }}" alt="{{ post.title }}" class="post-image">
         <small class="post-date">{{ post.created_on.date }}</small>
         <p class="post-content">{{ post.content | safe }}</p>
