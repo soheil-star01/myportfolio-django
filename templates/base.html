@@ -4,17 +4,15 @@
 <head>
     <meta charset="utf-8">
     <title>Sam's Personal Website</title>
-{#    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">#}
-{#    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/default.min.css">#}
     <link rel="stylesheet" type="text/css" href="{% static 'my_app/css/styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'photo_gallery/css/styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'blog/css/styles.css' %}">
-{#    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>#}
-{#    <script>hljs.highlightAll();</script>#}
 </head>
 <body>
     <div class="page-container">
     <h1>Sam's Personal Website</h1>
+    <p style="line-height: 0.1; color: #e0e0e0">Senior Python programmer and backend developer</p>
+    <br>
     <div class="home-bar">
         <a href="{% url 'main_index' %}">Home</a>
         <a href="{% url 'blog_index' %}">Blog</a>

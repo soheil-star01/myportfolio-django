@@ -23,10 +23,12 @@ html, body {
 }
 h1{
     color: #e0e0e0;
+    /*line-height: 0;*/
 }
 h2{
     color: #e0e0e0;
 }
+
 .paragraph {
     line-height: 1.8;
 }
