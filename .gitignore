@@ -7,3 +7,4 @@ media/*/*
 logs
 /.prod.env
 /.local.env
+/media/*

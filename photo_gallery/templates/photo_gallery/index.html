@@ -7,8 +7,6 @@
 
 {% block page_content %}
     <!-- Link to the external CSS file -->
-    <link rel="stylesheet" href="{% static 'my_app/css/gallery.css' %}">
-
     {% if tag_name %}
         <p>Filtered by tag: {{ tag_name }}</p>
     {% endif %}
