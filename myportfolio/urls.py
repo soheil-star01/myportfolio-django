@@ -26,6 +26,7 @@ urlpatterns = [
     path('photo_gallery/', include('photo_gallery.urls')),
     path('', include('my_app.urls')),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
+    path("cookies/", include("cookie_consent.urls")),
 ]
 
 if settings.DEBUG:

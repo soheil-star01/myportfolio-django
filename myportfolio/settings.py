@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     "blog.apps.BlogConfig",
     "my_app.apps.MyAppConfig",
     'django_ckeditor_5',
-    'storages'
+    'storages',
+    'cookie_consent'
 ]
 
 MIDDLEWARE = [
@@ -71,7 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.contrib.messages.context_processors.messages'
             ],
         },
     },
