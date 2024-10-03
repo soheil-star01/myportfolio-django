@@ -183,3 +183,46 @@ p {
     color: #000000;  /* Make the title stand out */
 
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    font-family: Arial, sans-serif;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+}
+
+td {
+    vertical-align: middle;
+}
+
+td img {
+    display: block;
+    margin: 0 auto 10px auto;
+}
+
+td a {
+    text-decoration: none;
+    color: #009879;
+    font-weight: bold;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
