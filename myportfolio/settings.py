@@ -24,17 +24,17 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-# if os.environ.get('RUNNING_MODE') == 'Local':
-#     DEBUG = True
-#     ALLOWED_HOSTS = ['*']
-# else:
-#     DEBUG = False
-#     ALLOWED_HOSTS = ['www.samdolat.com', 'samdolat.com', 'localhost']
-#     CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']
+if os.environ.get('RUNNING_MODE') == 'Local':
+    DEBUG = True
+    ALLOWED_HOSTS = ['*']
+else:
+    DEBUG = False
+    ALLOWED_HOSTS = ['www.samdolat.com', 'samdolat.com', 'localhost']
+    CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']
 
 
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+# DEBUG = True
+# ALLOWED_HOSTS = ['*']
 
 # Application definition
 
