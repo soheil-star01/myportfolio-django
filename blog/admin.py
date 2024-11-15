@@ -12,4 +12,3 @@ class BlogPostAdmin(admin.ModelAdmin):
     formfield_overrides = {
         BlogPost.content: {'widget': CKEditor5Widget},
     }
-    # search_fields = ('category__category',)

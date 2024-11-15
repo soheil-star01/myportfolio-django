@@ -32,7 +32,6 @@ else:
     ALLOWED_HOSTS = ['www.samdolat.com', 'samdolat.com', 'localhost']
     CSRF_TRUSTED_ORIGINS = ['https://samdolat.com', 'https://www.samdolat.com']
 
-
 # DEBUG = True
 # ALLOWED_HOSTS = ['*']
 
@@ -104,7 +103,11 @@ else:
             'USER': os.environ.get('DB_USER'),
             'PASSWORD': os.environ.get('DB_PASSWORD'),
             'HOST': os.environ.get('DB_URL'),
-            'PORT': '5432'
+            'PORT': '5432',
+            'OPTIONS': {
+                'options': '-c search_path=samdolat'
+            },
+
         }
     }
 
