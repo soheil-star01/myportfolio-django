@@ -100,7 +100,10 @@ else:
             'USER': os.environ.get('DB_USER'),
             'PASSWORD': os.environ.get('DB_PASSWORD'),
             'HOST': os.environ.get('DB_URL'),
-            'PORT': '5432'
+            'PORT': '5432',
+            'OPTIONS': {
+                'options': '-c search_path=samdolat'
+            },
         }
     }
 
