@@ -2,60 +2,23 @@
 {% load static %}
 <html lang="en">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XKNG3TB7ER"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-XKNG3TB7ER');
+    </script>
+
     <meta charset="utf-8">
     <title>{% block title %}Sam's Personal Website{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'my_app/css/styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'photo_gallery/css/styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'blog/css/styles.css' %}">
     
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user has already accepted or rejected cookies
-            if (!localStorage.getItem('cookiesAccepted')) {
-                document.getElementById('cookie-consent-banner').style.display = 'block';
-            }
-
-            // Function to load Google Analytics
-            function loadGoogleAnalytics() {
-                var script = document.createElement('script');
-                script.async = true;
-                script.src = 'https://www.googletagmanager.com/gtag/js?id=G-XKNG3TB7ER';
-                document.head.appendChild(script);
-
-                script.onload = function() {
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag() { dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', 'G-XKNG3TB7ER');
-                };
-            }
-
-            // Handle Accept button click
-            document.getElementById('accept-cookies').onclick = function() {
-                localStorage.setItem('cookiesAccepted', 'true');
-                document.getElementById('cookie-consent-banner').style.display = 'none';
-                loadGoogleAnalytics();  // Load GA after consent
-            };
-
-            // Handle Reject button click
-            document.getElementById('reject-cookies').onclick = function() {
-                localStorage.setItem('cookiesAccepted', 'false');
-                document.getElementById('cookie-consent-banner').style.display = 'none';
-            };
-
-            // Load Google Analytics if user previously accepted cookies
-            if (localStorage.getItem('cookiesAccepted') === 'true') {
-                loadGoogleAnalytics();
-            }
-        });
-    </script>
 </head>
 <body>
-    <div id="cookie-consent-banner" style="display: none; position: fixed; bottom: 0; background-color: #fff; padding: 10px; width: 100%; border-top: 1px solid #ccc;">
-        <p>This website uses cookies to improve your experience. We use Google Analytics to track usage. <a href="https://policies.google.com/privacy" target="_blank">Learn more</a>.</p>        
-        <button id="accept-cookies">Accept</button>
-        <button id="reject-cookies">Reject</button>
-    </div>
     <div class="page-container">
     <h1>Sam's Personal Website</h1>
     <p style="line-height: 0.1; color: #e0e0e0">Senior Python programmer and backend developer</p>
